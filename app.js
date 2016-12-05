@@ -4,9 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var maps = require('google-maps');
 var routes = require('./routes/index');
 var users = require('./routes/users');
+
 
 var app = express();
 

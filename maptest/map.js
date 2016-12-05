@@ -9,6 +9,7 @@ var publicConfig = {
 
 var gmAPI = new GoogleMapsAPI(publicConfig);
 
+<<<<<<< HEAD
 //var org = new google.maps.LatLng ( -33.89192157947345,151.13604068756104);
 //var dest = new google.maps.LatLng ( -33.69727974097957,150.29047966003418);
 
@@ -24,6 +25,8 @@ var geocodeParams = {
 //  console.log(result);
 //});
 
+=======
+>>>>>>> origin/master
 
 var directionParams = {
     origin: '-33.89192157947345,151.13604068756104',
