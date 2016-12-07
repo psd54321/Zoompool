@@ -51,12 +51,12 @@ var allocateRiders = function (callback) {
                 callback();
             });
         }, function (err) {
-            // All contacts are processed
+            // inner loop complete give call to outer loop
             callback();
         });
     }, function (err) {
-        // All users are processed
-        // Here the finished result
+        // All items are processed
+        // Here is the finished result
         callback(undefined, drivermemo);
     });
 };
