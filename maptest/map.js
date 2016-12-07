@@ -1,6 +1,7 @@
 var mapkey = require('../config/mapconfig');
 var GoogleMapsAPI = require('googlemaps');
 var polyline = require('polyline');
+var async = require('async');
 
 var publicConfig = {
     key: mapkey.key,
@@ -9,42 +10,104 @@ var publicConfig = {
 
 var gmAPI = new GoogleMapsAPI(publicConfig);
 
-<<<<<<< HEAD
-//var org = new google.maps.LatLng ( -33.89192157947345,151.13604068756104);
-//var dest = new google.maps.LatLng ( -33.69727974097957,150.29047966003418);
 
-var geocodeParams = {
-    "address": "121, Curtain Road, EC2A 3AD, London UK",
-    "components": "components=country:GB",
-    "bounds": "55,-1|54,1",
-    "language": "en",
-    "region": "uk"
-};
 
-//gmAPI.geocode(geocodeParams, function (err, result) {
-//  console.log(result);
-//});
+/*Distance and duration can be calculated from the source to destination
 
-=======
->>>>>>> origin/master
-
-var directionParams = {
-    origin: '-33.89192157947345,151.13604068756104',
-    destination: '-33.69727974097957,150.29047966003418',
+var distanceParams = {
+    origins: '-33.89192157947345,151.13604068756104',
+    destinations: '-33.69727974097957,150.29047966003418',
     waypoints: [{
-        location: '-33.821685, 150.413735'
+        location: '-3.821685, 150.413735'
     }],
-    travelMode: 'DRIVING'
+    mode: 'driving'
+};
+gmAPI.distance(distanceParams, function (err, results){
+    console.log(getMiles(results.rows[0].elements[0].distance.value));
+    console.log(results.rows[0].elements[0].duration.value);
+});*/
+
+var drivers = {
+    "Paul": [[40.61862, -74.03071], [40.70609, -73.99686]],
+    "Alice": [[40.83275, -72.99247], [40.71278, -74.00594]]
+};
+var riders = {
+    "Swena": [[40.63241, -74.02958], [40.69462, -73.98563]],
+    "Ashwin": [[40.77113, -73.97419], [40.82563, -73.93024]],
+    "Prathamesh": [[40.84520, -73.87388], [40.84520, -73.87388]],
+    "Harsh": [[40.69462, -73.98563], [40.75901, -73.98447]],
+    "Raj": [[40.68418, -73.97517], [40.75901, -73.98447]]
+};
+var drivermemo = {};
+//allocateRiders();
+
+
+var allocateRiders = function (callback) {
+    async.forEachOf(riders, function (ridervalue, ridername, callback) {
+        drivermemo[ridername] = {};
+        async.forEachOf(drivers, function (drivervalue, drivername, callback) {
+            getDistance(drivername, ridername, function (dis) {
+                drivermemo[ridername][drivername] = dis;
+                callback();
+            });
+        }, function (err) {
+            // All contacts are processed
+            callback();
+        });
+    }, function (err) {
+        // All users are processed
+        // Here the finished result
+        callback(undefined, drivermemo);
+    });
 };
 
-gmAPI.directions(directionParams, function (err, results) {
-    //console.log(JSON.stringify(results.routes[0].overview_polyline));
-    //gmAPI.geometry.encoding.decodePath()
-    console.log(JSON.stringify(results.routes[0].warnings));
-    
-    //This will calculate the closest distance of a point from a line.
-    console.log(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), -33.821685, 150.413735));
+//This will make an object having each driver's shortest distance from rider. 
+//Rider will be allocated to the driver who has the least shortest distance and more over who has the distance < 1 mile. 
+//If none of the drivers is < 1 mile away, then rider won't be allocated to any driver.
+//The driver won't be checked for a rider if two riders are already allocated to them
+/*function allocateRiders()
+{
+   for(rider in riders)
+   {
+        drivermemo[rider]={};
+        for(driver in drivers)
+        {
+            getDistance(driver,rider,function (dis){
+                drivermemo[rider][driver]=dis;
+            });
+        }
+
+   }
+   console.log(drivermemo);
+
+}*/
+
+
+
+
+allocateRiders(function (err, matches) {
+    // users here
+    console.log(matches);
 });
+
+//This calculates rider's shortest distance from driver's polyline
+function getDistance(driver, rider, callback) {
+    var directionParams = {
+        origin: drivers[driver][0][0] + "," + drivers[driver][0][1],
+        destination: drivers[driver][1][0] + "," + drivers[driver][1][1],
+        travelMode: 'DRIVING'
+    };
+    gmAPI.directions(directionParams, function (err, results) {
+        //This will calculate the closest distance of a point from a line.
+        var dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[rider][0][0], riders[rider][0][1]));
+        var dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[rider][1][0], riders[rider][1][1]));
+        callback(dbeg > dend ? dend : dbeg);
+    });
+}
+
+function getMiles(i) {
+    return i * 0.000621371192;
+}
 
 function bdccGeo(lat, lon) {
     var theta = (lon * Math.PI / 180.0);
