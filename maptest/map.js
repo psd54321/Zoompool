@@ -87,7 +87,45 @@ var allocateRiders = function (callback) {
 
 allocateRiders(function (err, matches) {
     // users here
-    console.log(matches);
+    //console.log(matches);
+    var driverAllocation = {};
+    for(driver in drivers)
+    {
+        driverAllocation[driver] = [];
+        var min = -1;
+        var selectedrider = "";
+        for(var i=0;i<2;i++)
+        {
+            min = -1;
+            flag=0;
+            for(rider in matches)
+            {
+                if(min==-1 && selectedrider!=rider && matches[rider][driver]<=1)
+                {
+                    min = matches[rider][driver];
+                    selectedrider = rider;
+                    flag=1;
+                }
+                else if(matches[rider][driver] <min && selectedrider!=rider && matches[rider][driver]<=1)
+                {
+                    min=matches[rider][driver];
+                    selectedrider=rider;
+                    flag=1;
+                }
+                /*if(matches[rider][driver]>1)
+                {
+                    selectedrider = "";
+                }*/
+            }
+            if(flag==1)
+            {
+                driverAllocation[driver].push(selectedrider);
+            //console.log(matches);
+                delete matches[selectedrider];
+            }
+        }
+    }
+    console.log(driverAllocation);
 });
 
 //This calculates rider's shortest distance from driver's polyline
