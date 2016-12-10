@@ -59,31 +59,49 @@ var drivermemo = {};
         // Here is the finished result
         callback(undefined, drivermemo);
     });
-};
-*/
+};*/
+
 var allocateRiders = function(callback){
     async.forEachOf(drivers, function (drivervalue, drivername, callback) {
         waypoint = "";
         min = -1;
         r = "";
         coordinates = -1;
-        drivermemo[drivervalue] = [];
-        for(var i=0;i<2;i++)
-        {
-            async.forEachOf(riders, function (ridervalue, ridername, callback) {  
-                getDistance(drivervalue, ridervalue, waypoint, function(dis){
+        drivermemo[drivername] = [];
+        count = 0;
+       async.whilst(
+            function () { return count < 2; },
+                function (callback) {
+                count++;
+                async.forEachOf(riders, function (ridervalue, ridername, callback) {  
+                getDistance(drivername, ridername, waypoint, function(dis){
                     if((dis[0]<=1 && min==-1) || (dis[0]<=1 && dis<min) )
                     {
                         min = dis[0];
-                        r = ridervalue;
+                        r = ridername;
                         coordinates = dis[1];
                     }
                 });
-            });
-            drivermemo[drivervalue].push(r);
-            delete riders[ridervalue];
-            waypoint = riders[ridervalue][coordinates][0]+","+riders[ridervalue][coordinates][1];
-        }
+            }, function (err) {
+            // inner loop complete give call to outer loop
+            drivermemo[drivername].push(r);
+            delete riders[ridername];
+            waypoint = riders[ridername][coordinates][0]+","+riders[ridername][coordinates][1];
+            callback(null, count);
+        });
+            },
+            function (err, n) {
+                // 5 seconds have passed, n = 5
+                callback();
+            }
+        );
+            
+        
+    }, function (err) {
+        // All items are processed
+        // Here is the finished result
+        console.log(drivermemo);
+        callback(undefined, drivermemo);
     });
 };
 //This will make an object having each driver's shortest distance from rider. 
@@ -107,10 +125,13 @@ var allocateRiders = function(callback){
 
 }*/
 
-
-
-
 allocateRiders(function (err, matches) {
+    // users here
+    console.log(matches);
+});
+
+
+/*allocateRiders(function (err, matches) {
     // users here
     //console.log(matches);
     var driverAllocation = {};
@@ -141,7 +162,7 @@ allocateRiders(function (err, matches) {
                 {
                     selectedrider = "";
                 }*/
-            }
+           /* }
             if(flag==1)
             {
                 driverAllocation[driver].push(selectedrider);
@@ -151,10 +172,10 @@ allocateRiders(function (err, matches) {
         }
     }
     console.log(driverAllocation);
-});
+});*/
 
 //This calculates rider's shortest distance from driver's polyline
-function getDistance(driver, rider, waypoint="",callback) {
+function getDistance(driver, rider, waypoint,callback) {
     var directionParams ={};
     if(waypoint == "")
     {
