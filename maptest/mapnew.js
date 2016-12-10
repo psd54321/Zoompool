@@ -42,7 +42,7 @@ var drivermemo = {};
 //allocateRiders();
 
 
-var allocateRiders = function (callback) {
+/*var allocateRiders = function (callback) {
     async.forEachOf(riders, function (ridervalue, ridername, callback) {
         drivermemo[ridername] = {};
         async.forEachOf(drivers, function (drivervalue, drivername, callback) {
@@ -60,7 +60,32 @@ var allocateRiders = function (callback) {
         callback(undefined, drivermemo);
     });
 };
-
+*/
+var allocateRiders = function(callback){
+    async.forEachOf(drivers, function (drivervalue, drivername, callback) {
+        waypoint = "";
+        min = -1;
+        r = "";
+        coordinates = -1;
+        drivermemo[drivervalue] = [];
+        for(var i=0;i<2;i++)
+        {
+            async.forEachOf(riders, function (ridervalue, ridername, callback) {  
+                getDistance(drivervalue, ridervalue, waypoint, function(dis){
+                    if((dis[0]<=1 && min==-1) || (dis[0]<=1 && dis<min) )
+                    {
+                        min = dis[0];
+                        r = ridervalue;
+                        coordinates = dis[1];
+                    }
+                });
+            });
+            drivermemo[drivervalue].push(r);
+            delete riders[ridervalue];
+            waypoint = riders[ridervalue][coordinates][0]+","+riders[ridervalue][coordinates][1];
+        }
+    });
+};
 //This will make an object having each driver's shortest distance from rider. 
 //Rider will be allocated to the driver who has the least shortest distance and more over who has the distance < 1 mile. 
 //If none of the drivers is < 1 mile away, then rider won't be allocated to any driver.
@@ -129,18 +154,31 @@ allocateRiders(function (err, matches) {
 });
 
 //This calculates rider's shortest distance from driver's polyline
-function getDistance(driver, rider, callback) {
-    var directionParams = {
-        origin: drivers[driver][0][0] + "," + drivers[driver][0][1],
-        destination: drivers[driver][1][0] + "," + drivers[driver][1][1],
-        //waypoints: 'optimize:true|via:40.77113, -73.97419|40.84520, -73.87388',
-        travelMode: 'DRIVING'
-    };
+function getDistance(driver, rider, waypoint="",callback) {
+    var directionParams ={};
+    if(waypoint == "")
+    {
+        directionParams = {
+            origin: drivers[driver][0][0] + "," + drivers[driver][0][1],
+            destination: drivers[driver][1][0] + "," + drivers[driver][1][1],
+            //waypoints: 'optimize:true|via:40.77113, -73.97419|40.84520, -73.87388',
+            travelMode: 'DRIVING'
+        };
+    }
+    else
+    {
+        directionParams = {
+            origin: drivers[driver][0][0] + "," + drivers[driver][0][1],
+            destination: drivers[driver][1][0] + "," + drivers[driver][1][1],
+            waypoints: 'optimize:true|via:'+waypoint,
+            travelMode: 'DRIVING'
+        };
+    }
     gmAPI.directions(directionParams, function (err, results) {
         //This will calculate the closest distance of a point from a line.
         var dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[rider][0][0], riders[rider][0][1]));
         var dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[rider][1][0], riders[rider][1][1]));
-        callback(dbeg > dend ? dend : dbeg);
+        callback([dbeg > dend ? dend : dbeg,dbeg > dend ? 1 : 0]);
     });
 }
 
