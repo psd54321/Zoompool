@@ -57,7 +57,7 @@ for drivername, drivervalue in drivers.iteritems():
             end_time = matrix["rows"][1]["elements"][1]["duration"]["value"]
             #l = ((driverschedule[drivername]+timedelta(seconds=start_time))-riderschedule)
             #print l.total_seconds()
-            if((start_distance<=3.0 and abs(((driverschedule[drivername]+timedelta(seconds=start_time))-riderschedule).total_seconds())<=1000) and end_distance<=3.0):
+            if((start_distance<=3.0 and abs(((driverschedule[drivername]+timedelta(seconds=start_time))-riderschedule).total_seconds())<=1000) and end_distance<=3.0):              #atmost 3miles of distance, reduce to 1 mile
                 if(drivername not in drivermemo):
                     drivermemo[drivername] = []
                 drivermemo[drivername].append(ridername)
