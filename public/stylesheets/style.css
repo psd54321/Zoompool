@@ -65,17 +65,30 @@ a {
     color: #45a049;
 }
 
-#instant {
+#instant,
+#advance {
     text-align: center;
 }
 
-#directions {
+#directions,
+#dir {
     text-align: center;
+}
+
+select.slotselect {
+    width: 25%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 42px;
 }
 
 .type {
     display: inline-block;
-    margin: 0 50px;
+    margin: 0 10px;
 }
 
 

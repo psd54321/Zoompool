@@ -20,6 +20,7 @@
         <div id="instant" class="tab-pane fade in active">
             <br>
             <br>
+            <h3>Now ride/drive in just one click!</h2>
             <form action="" method="post" enctype="multipart/form-data">
                 <h1><b>Ride/Drive</b></h1>
                 <br>
@@ -53,6 +54,107 @@
                 <br/>
                 <input type="submit" value="Book" class="submit" onclick="return flag;" /> </form>
         </div>
-        <div id="advance" class="tab-pane fade"> </div>
+        <div id="advance" class="tab-pane fade">
+            <br>
+            <br>
+            <h3>Now ride/drive in just one click!</h2>
+            <form action="" method="post" enctype="multipart/form-data">
+                <h2><b>Ride/Drive</b></h2>
+                <div class="type">
+                    <input type="radio" name="riderdrive" required checked class="radio" id="radio3">
+                    <label for="radio3">Ride</label>
+                </div>
+                <div class="type">
+                    <input type="radio" name="riderdrive" required class="radio" id="radio4">
+                    <label for="radio4">Drive</label>
+                </div>
+                <h2><b>Select Slot</b></h2>
+                <select id="slot" class="slotselect" onchange="populateTimeSlots();">
+                    <option value="">--Select a Slot--</option>
+                </select>
+                <script>
+                    var date = new Date();
+                    var datearray = [];
+                    var hr1 = date.getHours();
+                    if (hr1 >= 7 && hr1 < 10) {
+                        datearray.push("Morning "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear());
+                        datearray.push("Evening "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear());
+                    }
+                    else if (hr1 >= 10 && hr1 < 19) {
+                        datearray.push("Evening "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear());
+                    }
+                    
+                    for(var i=1;i<=6;i++){
+                        var newdate = new Date(date.getTime()+ i*24*60*60*1000);
+                        datearray.push("Morning "+newdate.getMonth()+"/"+newdate.getDate()+"/"+newdate.getFullYear());
+                        datearray.push("Evening "+newdate.getMonth()+"/"+newdate.getDate()+"/"+newdate.getFullYear());
+                        
+                    }
+                    var slotid = document.getElementById("slot");
+                    for(dates in datearray){
+                        slotid.options[slotid.options.length] = new Option(datearray[dates], datearray[dates]);
+                    }
+                    //alert(datearray);
+                    
+                </script>
+                
+                <h2><b>Choose your time range</b></h2>
+                <select id="time1" class="slotselect">
+                    <option value="">Choose Time</option>
+                </select>
+                to
+                <select id="time2" class="slotselect">
+                    <option value="">Choose Time</option>
+                </select>
+                <script>
+                    function populateTimeSlots(){
+                        var e = document.getElementById("slot");
+                        var slotselected = e.options[e.selectedIndex].value;
+                        var daytime = slotselected.split(" ");
+                        var morning_or_evening = daytime[0];
+                        var time1 = document.getElementById("time1");
+                        var time2 = document.getElementById("time2");
+                        var d;
+                        var dir = document.getElementById("dir");
+                        if(morning_or_evening == "Morning")
+                            {
+                                d = new Date("July 21, 1983 06:45:00");
+                                dir.innerHTML = "<img src='images/home.png' width='20px' height='20px'> Home <img src='images/arrow.png' width='40%' height='50px'> Office <img src='images/office.png' width='20px' height='20px'>";
+                            }
+                        else
+                            {
+                                d = new Date("July 21, 1983 16:00:00");
+                                dir.innerHTML = "<img src='images/office.png' width='20px' height='20px'> Office <img src='images/arrow.png' width='40%' height='50px'> Home <img src='images/home.png' width='20px' height='20px'>";
+                                
+                            }
+                        //alert(d);
+                        while (time1.options.length) {
+                            time1.remove(0);
+                            
+                        }
+                        time1.options[time1.options.length] = new Option("Choose Time","");
+                        while (time2.options.length) {
+                            time2.remove(0);
+                        }
+                        time2.options[time2.options.length] = new Option("Choose Time","");
+                        for(var i=1;i<13;i++){
+                            d.setTime(d.getTime()+15*60*1000);
+                            //alert(e);
+                            var e = format_two_digits(d.getHours())+":"+format_two_digits(d.getMinutes())+":"+format_two_digits(d.getSeconds());
+                            time1.options[time1.options.length] = new Option(e, e);
+                            time2.options[time2.options.length] = new Option(e, e);
+                        }
+                    }
+                    function format_two_digits(n) {
+                        return n < 10 ? '0' + n : n; }
+                </script>
+                
+                <br/>
+                <br/>
+                <div id="dir"></div>
+                <br/>
+                <br/>
+                <input type="submit" value="Book" class="submit" onclick="return flag1;" /> </form>
+        </div>
     </div>
 </div>
