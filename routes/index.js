@@ -21,4 +21,9 @@ router.get('/address', function (req, res, next) {
         title: 'Express'
     });
 });
+router.get('/driver', function (req, res, next) {
+    res.render('driversetup', {
+        title: 'Express'
+    });
+});
 module.exports = router;

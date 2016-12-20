@@ -32,6 +32,7 @@ body {
 
 .innercontainer {
     padding: 40px;
+    text-align: center;
 }
 
 .head {
@@ -59,6 +60,7 @@ body {
     margin: auto auto;
     border-radius: 30px;
     padding: 40px;
+    text-align: left;
 }
 
 .logo {
@@ -102,7 +104,7 @@ select.slotselect {
 
 */
 
-label {
+.radiolabel {
     width: 200px;
     border-radius: 3px;
     border: 1px solid #D1D3D4
