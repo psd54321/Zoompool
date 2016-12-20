@@ -1,17 +1,57 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    /* adds animation for all transitions */
+    /*-webkit-transition: .25s ease-in-out;
+    -moz-transition: .25s ease-in-out;
+    -o-transition: .25s ease-in-out;
+    transition: .25s ease-in-out;*/
+    transition-property: all;
+    transition-duration: .5s;
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    -webkit-transition-property: all;
+    -webkit-transition-duration: .5s;
+    -webkit-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    -moz-transition-property: all;
+    -moz-transition-duration: .5s;
+    -moz-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    -o-transition-property: all;
+    -o-transition-duration: .5s;
+    -o-transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    margin: 0;
+    padding: 0;
+    -webkit-text-size-adjust: none;
+}
+
 body {
-    padding: 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     background-color: darkgreen;
 }
 
-a {
-    color: #45a049;
+.innercontainer {
+    padding: 40px;
+}
+
+.sidebarcontainer {}
+
+.homecontainer {
+    background-color: white;
+    color: black;
+    width: 60%;
+    display: inline-block;
+    margin: auto 20%;
+    border-radius: 30px;
+    padding: 40px;
+    height: 100%;
 }
 
 .container {
     background-color: white;
     color: black;
     width: 40%;
+    display: inline-block;
     margin: auto auto;
     border-radius: 30px;
     padding: 40px;
@@ -20,6 +60,249 @@ a {
 .logo {
     text-align: center;
 }
+
+a {
+    color: #45a049;
+}
+
+#instant {
+    text-align: center;
+}
+
+#directions {
+    text-align: center;
+}
+
+.type {
+    display: inline-block;
+    margin: 0 50px;
+}
+
+
+/*.type input[type="radio"]:checked {
+    background-color: darkgreen;
+}
+
+*/
+
+label {
+    width: 200px;
+    border-radius: 3px;
+    border: 1px solid #D1D3D4
+}
+
+
+/* hide input */
+
+input.radio:empty {
+    display: none;
+}
+
+
+/* style label */
+
+input.radio:empty ~ label {
+    position: relative;
+    float: left;
+    line-height: 2.5em;
+    text-indent: 3.25em;
+    margin-top: 2em;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input.radio:empty ~ label:before {
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    width: 2.5em;
+    background: #D1D3D4;
+    border-radius: 3px 0 0 3px;
+}
+
+
+/* toggle hover */
+
+input.radio:hover:not(:checked) ~ label:before {
+    content: '\2714';
+    text-indent: .9em;
+    color: #C2C2C2;
+}
+
+input.radio:hover:not(:checked) ~ label {
+    color: #888;
+}
+
+
+/* toggle on */
+
+input.radio:checked ~ label:before {
+    content: '\2714';
+    text-indent: .9em;
+    color: #9CE2AE;
+    background-color: #4DCB6D;
+}
+
+input.radio:checked ~ label {
+    color: #777;
+}
+
+
+/* radio focus */
+
+
+/* gets the actual input out of the way; 
+we're going to style the label instead */
+
+
+/*sidebar menu css begins here*/
+
+#drawer-toggle {
+    position: absolute;
+    opacity: 0;
+}
+
+#drawer-toggle-label {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    left: 0px;
+    height: 50px;
+    width: 50px;
+    display: block;
+    position: fixed;
+    background: white;
+    z-index: 1;
+}
+
+
+/* adds our "hamburger" menu icon */
+
+#drawer-toggle-label:before {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 2px;
+    width: 24px;
+    background: #8d8d8d;
+    left: 13px;
+    top: 18px;
+    box-shadow: 0 6px 0 #8d8d8d, 0 12px 0 #8d8d8d;
+}
+
+header {
+    width: 100%;
+    position: fixed;
+    left: 0px;
+    background: #efefef;
+    padding: 10px 10px 10px 50px;
+    font-size: 30px;
+    line-height: 30px;
+    z-index: 0;
+}
+
+
+/* drawer menu pane - note the 0px width */
+
+#drawer {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    height: 100%;
+    width: 300px;
+    background: #2f2f2f;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* actual page content pane */
+
+#page-content {
+    margin-left: 0px;
+    margin-top: 50px;
+    width: 100%;
+    height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px;
+}
+
+
+/* checked styles (menu open state) */
+
+#drawer-toggle:checked ~ #drawer-toggle-label {
+    height: 100%;
+    width: calc(100% - 300px);
+    background: rgba(255, 255, 255, .8);
+}
+
+#drawer-toggle:checked ~ #drawer-toggle-label,
+#drawer-toggle:checked ~ header {
+    left: 300px;
+}
+
+#drawer-toggle:checked ~ #drawer {
+    left: 0px;
+}
+
+#drawer-toggle:checked ~ #page-content {
+    margin-left: 300px;
+}
+
+
+/* Menu item styles */
+
+#drawer ul {
+    list-style-type: none;
+}
+
+#drawer ul a {
+    display: block;
+    padding: 10px;
+    color: #c7c7c7;
+    text-decoration: none;
+}
+
+#drawer ul a:hover {
+    color: white;
+}
+
+
+/* Responsive MQ */
+
+@media all and (max-width:350px) {
+    #drawer-toggle:checked ~ #drawer-toggle-label {
+        height: 100%;
+        width: 50px;
+    }
+    #drawer-toggle:checked ~ #drawer-toggle-label,
+    #drawer-toggle:checked ~ header {
+        left: calc(100% - 50px);
+    }
+    #drawer-toggle:checked ~ #drawer {
+        width: calc(100% - 50px);
+        padding: 20px;
+    }
+    #drawer-toggle:checked ~ #page-content {
+        margin-left: calc(100% - 50px);
+    }
+}
+
+
+/*sidebar menu css ends here*/
 
 .text {
     width: 100%;
@@ -31,6 +314,11 @@ a {
     box-sizing: border-box;
 }
 
+input[type="radio"] {
+    padding: 10px;
+    display: inline-block;
+}
+
 .dob {
     width: 25%;
     padding: 12px 20px;
@@ -39,6 +327,15 @@ a {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+#warning {
+    display: inline-block;
+    text-align: center;
+    border: 1px solid red;
+    width: 100%;
+    color: red;
+    padding: 10px;
 }
 
 select.dob {

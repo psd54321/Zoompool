@@ -1,0 +1,58 @@
+<div class="sidebarcontainer">
+    <input type="checkbox" id="drawer-toggle" name="drawer-toggle" />
+    <label for="drawer-toggle" id="drawer-toggle-label"></label>
+    <nav id="drawer">
+        <ul>
+            <li><a href="#">Menu Item</a></li>
+            <li><a href="#">Menu Item</a></li>
+            <li><a href="#">Menu Item</a></li>
+            <li><a href="#">Menu Item</a></li>
+        </ul>
+    </nav>
+</div>
+<div class="homecontainer">
+    <div class="logo"> <img src="images/logo.png" alt="Avatar" class="avatar"> </div>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#instant">Instant Booking</a></li>
+        <li><a data-toggle="tab" href="#advance">Advance Booking</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="instant" class="tab-pane fade in active">
+            <br>
+            <br>
+            <form action="" method="post" enctype="multipart/form-data">
+                <h1><b>Ride/Drive</b></h1>
+                <br>
+                <div class="type">
+                    <input type="radio" name="riderdrive" required checked class="radio" id="radio1">
+                    <label for="radio1">Ride</label>
+                </div>
+                <div class="type">
+                    <input type="radio" name="riderdrive" required class="radio" id="radio2">
+                    <label for="radio2">Drive</label>
+                </div>
+                <br/>
+                <br/>
+                <div id="directions"></div>
+                <script>
+                    var hr = (new Date()).getHours();
+                    //hr = 7;
+                    var flag = true;
+                    var dir = document.getElementById("directions");
+                    if (hr >= 7 && hr < 10) {
+                        dir.innerHTML = "<img src='images/home.png' width='20px' height='20px'> Home <img src='images/arrow.png' width='40%' height='50px'> Office <img src='images/office.png' width='20px' height='20px'>";
+                    }
+                    else if (hr >= 16 && hr < 19) {
+                        dir.innerHTML = "<img src='images/office.png' width='20px' height='20px'> Office <img src='images/arrow.png' width='40%' height='50px'> Home <img src='images/home.png' width='20px' height='20px'>";
+                    }
+                    else {
+                        dir.innerHTML = "<div id='warning'>You cannot make a booking now! Try advance booking.</div>";
+                        flag = false;
+                    }
+                </script>
+                <br/>
+                <input type="submit" value="Book" class="submit" onclick="return flag;" /> </form>
+        </div>
+        <div id="advance" class="tab-pane fade"> </div>
+    </div>
+</div>
