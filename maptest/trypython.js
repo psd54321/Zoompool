@@ -1,10 +1,18 @@
 var PythonShell = require('python-shell');
-var pyshell = new PythonShell('../worker_instant.py');
+//var pyshell = new PythonShell('../worker_instant_rider.py');
 
 // sends a message to the Python script via stdin
 //pyshell.send('hello');
-
-pyshell.on('message', function (message) {
+var options = {
+  mode: 'text',
+  args: ['sg4423@nyu.edu']
+};
+PythonShell.run('../worker_instant_rider.py', options, function (err, results) {
+  if (err) throw err;
+  // results is an array consisting of messages collected during execution
+  console.log('results: %j', results);
+});
+/*pyshell.on('message', function (message) {
   // received a message sent from the Python script (a simple "print" statement)
   console.log(message);
 });
@@ -13,4 +21,4 @@ pyshell.on('message', function (message) {
 pyshell.end(function (err) {
   if (err) throw err;
 //  console.log('finished');
-});
+});*/

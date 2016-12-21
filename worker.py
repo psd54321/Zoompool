@@ -1,31 +1,83 @@
 import googlemaps
-from datetime import datetime
+from datetime import *
 import polyline
 import json
 import math
-
+import MySQLdb
 key = 'AIzaSyB45rLge0qJX25y20ejv_B9iJG-mHLwt5E'
 gmaps = googlemaps.Client(key=key)
+db = MySQLdb.connect("zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com","root","ashwin92","dbzpool" )
+cursor = db.cursor()
+sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype, t.time1, t.time2, t.date, t.allocated FROM customer as c, trip as t where c.email=t.email and t.allocated = 0";
+drivers = {}
+riders = {} 
+driverschedule = {}
+riderschedule = {}
 
-drivers = {
+# Execute the SQL command
+cursor.execute(sql)
+# Fetch all the rows in a list of lists.
+results = cursor.fetchall()
+for row in results:
+  email = row[0]
+  #print email
+  homelat = float(row[1])
+  #print homelat
+  homelong = float(row[2])
+  #print homelong
+  worklat = float(row[3])
+  #print worklat
+  worklong = float(row[4])
+  #print worklong
+  ridetype = row[5]
+  #print ridetype
+  time1 = row[6]
+  #print time1
+  time2 = row[7]
+  #print time2
+  date1 = row[8]
+  #print date1
+  allocated = row[9]
+  #print allocated
+  if ridetype == "driver":
+        drivers[email] = []
+        drivers[email].append([homelat,homelong])
+        drivers[email].append([worklat,worklong])
+        driverschedule[email] = []
+        driverschedule[email].append(time1)
+        driverschedule[email].append(time2)
+        #print time1<time2
+  else:
+        riders[email] = []
+        riders[email].append([homelat,homelong])
+        riders[email].append([worklat,worklong])
+        riderschedule[email] = []
+        riderschedule[email].append(time1)
+        riderschedule[email].append(time2)
+        #print time1>time2
+
+# disconnect from server
+print riderschedule
+db.close()
+'''drivers = {
     "Paul": [[40.61862, -74.03071], [40.70609, -73.99686]],
     "Alice": [[40.83275, -72.99247], [40.71278, -74.00594]]
 }
 riders = {
-    "Swena": [[40.63241, -74.02958], [40.69462, -73.98563]],
+    "Chris": [[40.63241, -74.02958], [40.69462, -73.98563]],
     "Ashwin": [[40.77113, -73.97419], [40.82563, -73.93024]],
     "Prathamesh": [[40.84520, -73.87388], [40.84520, -73.87388]],
     "Harsh": [[40.69462, -73.98563], [40.75901, -73.98447]],
     "Raj": [[40.68418, -73.97517], [40.75901, -73.98447]]
-}
+}'''
 drivermemo ={}
 
 # Geocoding an address
-geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
+#geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
 #print geocode_result
 
 # Look up an address with reverse geocoding
-reverse_geocode_result = gmaps.reverse_geocode((40.714224, -73.961452))
+#reverse_geocode_result = gmaps.reverse_geocode((40.714224, -73.961452))
 
 # Request directions via public transit
 now = datetime.now()
@@ -172,41 +224,51 @@ for drivername, drivervalue in drivers.iteritems():
         #print "++++++++++++++++++++++++++++++"
         for ridername, ridervalue in riders.iteritems():
             #print ridername
-            results = ""
-            if (waypoint == ""):
-                results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
-                                     str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
-                                     mode="driving",
-                                     departure_time=now)
-            else:
-                results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
-                                     str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
-                                     mode="driving",
-                                     waypoints=[waypoint],
-                                     optimize_waypoints=True,
-                                     departure_time=now)
-            dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][0][0], riders[ridername][0][1]))
-            dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][1][0], riders[ridername][1][1]))
-            
-            dis = []
-            if(dbeg > dend):
-                dis.append(dend)
-            else:
-                dis.append(dbeg)
-            if(dbeg > dend):
-                dis.append(1)
-            else:
-                dis.append(0)
+            origins = [{"lat": drivervalue[0][0],"lng": drivervalue[0][1]},{"lat": drivervalue[1][0],"lng": drivervalue[1][1]}]
+            destinations = [{"lat": ridervalue[0][0],"lng": ridervalue[0][1]},{"lat": ridervalue[1][0],"lng": ridervalue[1][1]}]
+            matrix = gmaps.distance_matrix(origins, destinations,mode="driving")
+            start_distance = getMiles(matrix["rows"][0]["elements"][0]["distance"]["value"])
+            start_time = matrix["rows"][0]["elements"][0]["duration"]["value"]
+            end_distance = getMiles(matrix["rows"][1]["elements"][1]["distance"]["value"])
+            end_time = matrix["rows"][1]["elements"][1]["duration"]["value"]
+            print start_time;
+            newdrivertime1 = driverschedule[drivername][0]+timedelta(seconds=start_time)
+            newdrivertime2 = driverschedule[drivername][1]+timedelta(seconds=start_time)
+            if(riderschedule[ridername][0]>=newdrivertime1 and riderschedule[ridername][0]<=newdrivertime2):
+                results = ""
+                if (waypoint == ""):
+                    results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
+                                         str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
+                                         mode="driving",
+                                         departure_time=now)
+                else:
+                    results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
+                                         str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
+                                         mode="driving",
+                                         waypoints=[waypoint],
+                                         optimize_waypoints=True,
+                                         departure_time=now)
+                dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][0][0], riders[ridername][0][1]))
+                dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][1][0], riders[ridername][1][1]))
 
-            if ((dis[0] <= 1 and minimum == -1) or (dis[0] <= 1 and dis[0] < minimum)):
-                minimum = dis[0]
-                r = ridername
-                coordinates = dis[1]
-            #print minimum
-            
+                dis = []
+                if(dbeg > dend):
+                    dis.append(dend)
+                else:
+                    dis.append(dbeg)
+                if(dbeg > dend):
+                    dis.append(1)
+                else:
+                    dis.append(0)
+
+                if ((dis[0] <= 1 and minimum == -1) or (dis[0] <= 1 and dis[0] < minimum)):
+                    minimum = dis[0]
+                    r = ridername
+                    coordinates = dis[1]
+                #print minimum
+
         if(r in riders):
-
-            drivermemo[drivername].append(r)
+            drivermemo[drivername].append(r+" "+str(riderschedule[ridername][0]))
             waypoint = str(riders[r][coordinates][0]) + "," + str(riders[r][coordinates][1])
             riders.pop(r,None)
 

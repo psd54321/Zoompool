@@ -4,7 +4,10 @@ from datetime import *
 import json
 import math
 import pprint
+import sys
+import MySQLdb
 
+print(sys.argv[1])
 key = 'AIzaSyB45rLge0qJX25y20ejv_B9iJG-mHLwt5E'
 gmaps = googlemaps.Client(key=key)
 #print time(9,16,55)
