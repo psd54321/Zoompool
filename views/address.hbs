@@ -18,13 +18,48 @@
     <br>
     <h3 class="head">Wanna update your addresses? Update here</h3>
     <br>
-    <form action="" method="post"> <img src='images/home.png' width='20px' height='20px'> Home
-        <input type="text" placeholder="Enter Home Address" name="home" required class="text">
+    <form action="/updateaddress" method="post"> <img src='images/home.png' width='20px' height='20px'> Home
+        <input type="text" id="autocompletehome" placeholder="Enter Home Address" name="home" required class="text" onFocus="geolocate()">
         <br/>
         <br/>
         <br/><img src='images/office.png' width='20px' height='20px'> Office
-        <input type="text" placeholder="Enter Office Address" name="office" required class="text">
+        <input type="text" id="autocompletework" placeholder="Enter Office Address" name="office" required class="text" onFocus="geolocate()">
         <br/>
         <br/>
-        <input type="submit" value="Book" class="submit" onclick="return flag1;" /> </form>
+        <input type="submit" value="Save" class="submit" onclick="return flag1;" /> </form>
 </div>
+<script>
+    var placeSearch, autocompletehome, autocompletework;
+    
+     function initAutocomplete() {
+        // Create the autocomplete object, restricting the search to geographical
+        // location types.
+        autocompletehome = new google.maps.places.Autocomplete(
+            /** @type {!HTMLInputElement} */(document.getElementById('autocompletehome')),
+            {types: ['geocode']});
+         
+          autocompletework = new google.maps.places.Autocomplete(
+            /** @type {!HTMLInputElement} */(document.getElementById('autocompletework')),
+            {types: ['geocode']});
+     }
+    
+    function geolocate() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var geolocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            var circle = new google.maps.Circle({
+              center: geolocation,
+              radius: position.coords.accuracy
+            });
+            autocomplete.setBounds(circle.getBounds());
+          });
+        }
+      }
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB45rLge0qJX25y20ejv_B9iJG-mHLwt5E&libraries=places&callback=initAutocomplete"
+        async defer></script>

@@ -4,7 +4,17 @@ var request = require("request");
 var mysql = require('mysql');
 var dateFormat = require('dateformat');
 var PythonShell = require('python-shell');
-var pyshell = new PythonShell('worker_instant.py');
+var pyshell = new PythonShell('worker_instant_driver.py');
+var mapkey = require('../config/mapconfig');
+var GoogleMapsAPI = require('googlemaps');
+var polyline = require('polyline');
+var async = require('async');
+var publicConfig = {
+    key: mapkey.key,
+    encode_polylines: false
+}
+var gmAPI = new GoogleMapsAPI(publicConfig);
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {
@@ -107,7 +117,7 @@ router.post('/advance', function (req, res) {
     });
 
     console.log("I am here!!");
-    PythonShell.run('worker_instant.py', function (err) {
+    PythonShell.run('worker_instant_driver.py', function (err) {
         if (err) throw err;
         console.log('finished');
     });
@@ -135,6 +145,28 @@ router.post('/instant', function (req, res) {
     });
 
 
+});
+
+router.post('/updateaddress', function (req, res) {
+    var home = req.body.home;
+    var office = req.body.office;
+
+    console.log(home);
+    console.log(office);
+
+    var geocodeParams = {
+        "address": "121, Curtain Road, EC2A 3AD, London UK",
+        "components": "components=country:GB",
+        "bounds": "55,-1|54,1",
+        "language": "en",
+        "region": "uk"
+    };
+
+    gmAPI.geocode(geocodeParams, function (err, result) {
+        console.log(result);
+    });
+
+    res.redirect('/home');
 });
 
 module.exports = router;
