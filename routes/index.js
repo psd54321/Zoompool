@@ -106,7 +106,12 @@ router.post('/advance', function (req, res) {
         res.redirect('/home');
     });
 
-
+    console.log("I am here!!");
+    PythonShell.run('worker_instant.py', function (err) {
+        if (err) throw err;
+        console.log('finished');
+    });
+    console.log("Something did happen!!");
 });
 
 
@@ -130,19 +135,6 @@ router.post('/instant', function (req, res) {
     });
 
 
-});
-
-router.get('/pythontest', function (req, res) {
-    pyshell.on('message', function (message) {
-        // received a message sent from the Python script (a simple "print" statement)
-        console.log(message);
-    });
-
-    // end the input stream and allow the process to exit
-    pyshell.end(function (err) {
-        if (err) throw err;
-        //  console.log('finished');
-    });
 });
 
 module.exports = router;

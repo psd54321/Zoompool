@@ -4,6 +4,7 @@ from datetime import *
 import json
 import math
 import pprint
+import MySQLdb
 
 key = 'AIzaSyB45rLge0qJX25y20ejv_B9iJG-mHLwt5E'
 gmaps = googlemaps.Client(key=key)
@@ -64,5 +65,6 @@ for drivername, drivervalue in drivers.iteritems():
             print(str(start_distance)+" "+str(start_time)+" -> "+str(end_distance)+" "+str(end_time))
             
 print drivermemo
-            
+
+json.dump(drivermemo, open("text.txt",'w'))
             
