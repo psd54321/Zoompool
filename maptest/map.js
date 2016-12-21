@@ -13,7 +13,6 @@ var gmAPI = new GoogleMapsAPI(publicConfig);
 
 
 /*Distance and duration can be calculated from the source to destination
-
 var distanceParams = {
     origins: '-33.89192157947345,151.13604068756104',
     destinations: '-33.69727974097957,150.29047966003418',
@@ -42,24 +41,26 @@ var drivermemo = {};
 //allocateRiders();
 
 
-var allocateRiders = function (callback) {
-    async.forEachOf(riders, function (ridervalue, ridername, callback) {
+function allocateRiders() {
+    async.forEachOf(riders, function (ridervalue, ridername, next) {
         drivermemo[ridername] = {};
-        async.forEachOf(drivers, function (drivervalue, drivername, callback) {
+        console.log(ridername);
+        async.forEachOf(drivers, function (drivervalue, drivername, nexts) {
             getDistance(drivername, ridername, function (dis) {
                 drivermemo[ridername][drivername] = dis;
-                callback();
+                console.log(drivername+" "+dis);
+                nexts();
             });
-        }, function (err) {
-            // inner loop complete give call to outer loop
-            callback();
-        });
+        }, next);
     }, function (err) {
         // All items are processed
         // Here is the finished result
-        callback(undefined, drivermemo);
+        console.log(drivermemo);
+        //finalcallback(undefined, drivermemo);
     });
 };
+
+allocateRiders();
 
 //This will make an object having each driver's shortest distance from rider. 
 //Rider will be allocated to the driver who has the least shortest distance and more over who has the distance < 1 mile. 
@@ -76,16 +77,14 @@ var allocateRiders = function (callback) {
                 drivermemo[rider][driver]=dis;
             });
         }
-
    }
    console.log(drivermemo);
-
 }*/
 
 
 
 
-allocateRiders(function (err, matches) {
+/*allocateRiders(function (err, matches) {
     // users here
     //console.log(matches);
     var driverAllocation = {};
@@ -112,10 +111,10 @@ allocateRiders(function (err, matches) {
                     selectedrider=rider;
                     flag=1;
                 }
-                /*if(matches[rider][driver]>1)
+                if(matches[rider][driver]>1)
                 {
                     selectedrider = "";
-                }*/
+                }
             }
             if(flag==1)
             {
@@ -126,8 +125,7 @@ allocateRiders(function (err, matches) {
         }
     }
     console.log(driverAllocation);
-});
-
+});*/
 //This calculates rider's shortest distance from driver's polyline
 function getDistance(driver, rider, callback) {
     var directionParams = {
