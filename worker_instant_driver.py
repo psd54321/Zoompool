@@ -1,0 +1,67 @@
+import googlemaps
+from datetime import *
+#import polyline
+import json
+import math
+import pprint
+
+key = 'AIzaSyB45rLge0qJX25y20ejv_B9iJG-mHLwt5E'
+gmaps = googlemaps.Client(key=key)
+#print time(9,16,55)
+riders = {
+    "Paul": [[40.61862, -74.03071], [40.70609, -73.99686]],
+    "Alice": [[40.83275, -72.99247], [40.71278, -74.00594]],
+    "Ashwin": [[40.77113, -73.97419], [40.82563, -73.93024]],
+    "Prathamesh": [[40.84520, -73.87388], [40.84520, -73.87388]],
+    "Harsh": [[40.69462, -73.98563], [40.75901, -73.98447]],
+    "Raj": [[40.68418, -73.97517], [40.75901, -73.98447]]
+}
+riderschedule = {
+    "Paul": datetime(2000,1,1,9,30,55),        #hr,min,sec
+    "Alice": datetime(2000,1,1,9,31,55),
+    "Ashwin": datetime(2000,1,1,9,30,55),
+    "Prathamesh": datetime(2000,1,1,9,30,55),
+    "Harsh": datetime(2000,1,1,9,30,55),
+    "Raj": datetime(2000,1,1,9,31,55)
+}
+drivername = "Chris"
+driver = [[40.63241, -74.02958], [40.69462, -73.98563]]
+driverschedule = datetime(2000,1,1,9,30,0)
+drivermemo ={}
+
+# Geocoding an address
+#geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
+#rint geocode_result
+
+# Look up an address with reverse geocoding
+#reverse_geocode_result = gmaps.reverse_geocode((40.714224, -73.961452))
+
+# Request directions via public transit
+#now = datetime.now()
+
+def getMiles(i):
+    return i * 0.000621371192
+
+
+matrix = []
+pp = pprint.PrettyPrinter(indent=4)
+for ridername, ridervalue in riders.iteritems(): 
+    if (drivername not in drivermemo) or (len(drivermemo[drivername])<2):
+            origins = [{"lat": driver[0][0],"lng": driver[0][1]},{"lat": driver[1][0],"lng": driver[1][1]}]
+            destinations = [{"lat": ridervalue[0][0],"lng": ridervalue[0][1]},{"lat": ridervalue[1][0],"lng": ridervalue[1][1]}]
+            matrix = gmaps.distance_matrix(origins, destinations,mode="driving")
+            start_distance = getMiles(matrix["rows"][0]["elements"][0]["distance"]["value"])
+            start_time = matrix["rows"][0]["elements"][0]["duration"]["value"]
+            end_distance = getMiles(matrix["rows"][1]["elements"][1]["distance"]["value"])
+            end_time = matrix["rows"][1]["elements"][1]["duration"]["value"]
+            #l = ((driverschedule[drivername]+timedelta(seconds=start_time))-riderschedule)
+            #print l.total_seconds()
+            if((start_distance<=3.0 and abs(((driverschedule+timedelta(seconds=start_time))-riderschedule[ridername]).total_seconds())<=1000) and end_distance<=3.0):              #atmost 3miles of distance, reduce to 1 mile
+                if(drivername not in drivermemo):
+                    drivermemo[drivername] = []
+                drivermemo[drivername].append(ridername)
+            print(str(start_distance)+" "+str(start_time)+" -> "+str(end_distance)+" "+str(end_time))
+            
+print drivermemo
+            
+            
