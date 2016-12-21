@@ -357,7 +357,8 @@ input[type="radio"] {
     padding: 10px;
 }
 
-select.dob {
+select.dob,
+select.gender {
     width: 25%;
     padding: 12px 20px;
     margin: 8px 0;
