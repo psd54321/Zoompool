@@ -4,10 +4,6 @@ import polyline
 import json
 import math
 import MySQLdb
-<<<<<<< HEAD
-=======
-
->>>>>>> 3955bc27f306d18a38acbfd9c79e4254199a281e
 key = 'AIzaSyB45rLge0qJX25y20ejv_B9iJG-mHLwt5E'
 gmaps = googlemaps.Client(key=key)
 db = MySQLdb.connect("zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com","root","ashwin92","dbzpool" )
