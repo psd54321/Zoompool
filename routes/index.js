@@ -4,7 +4,7 @@ var request = require("request");
 var mysql = require('mysql');
 var dateFormat = require('dateformat');
 var PythonShell = require('python-shell');
-var pyshell = new PythonShell('../worker_instant.py');
+var pyshell = new PythonShell('worker_instant.py');
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {
