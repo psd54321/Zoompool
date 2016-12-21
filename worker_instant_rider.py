@@ -5,6 +5,7 @@ import json
 import math
 import pprint
 import sys
+
 import MySQLdb
 
 print(sys.argv[1])
@@ -67,5 +68,6 @@ for drivername, drivervalue in drivers.iteritems():
             print(str(start_distance)+" "+str(start_time)+" -> "+str(end_distance)+" "+str(end_time))
             
 print drivermemo
-            
+
+json.dump(drivermemo, open("text.txt",'w'))
             

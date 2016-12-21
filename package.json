@@ -8,12 +8,12 @@
   "dependencies": {
     "async": "^2.1.4",
     "aws-es": "latest",
-    "aws-sdk": "~2.1.36",
+    "aws-sdk": "~2.7.17",
     "aws4": "latest",
     "body-parser": "^1.15.2",
     "cookie-parser": "~1.4.3",
     "dateformat": "^2.0.0",
-    "debug": "~2.3.3",
+    "debug": "~2.5.1",
     "elasticsearch": "latest",
     "express": "~4.14.0",
     "express-session": "^1.14.2",
@@ -25,9 +25,10 @@
     "morgan": "~1.7.0",
     "mysql": "^2.12.0",
     "polyline": "^0.2.0",
+    "python-shell": "^0.4.0",
     "request": "latest",
     "serve-favicon": "~2.3.0",
     "sns-validator": "^0.2.1",
-    "workerpool": "~1.0.0"
+    "workerpool": "~2.2.0"
   }
 }

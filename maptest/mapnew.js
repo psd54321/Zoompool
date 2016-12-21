@@ -7,20 +7,32 @@ var publicConfig = {
     , encode_polylines: false
 }
 var gmAPI = new GoogleMapsAPI(publicConfig);
+<<<<<<< Updated upstream
 /*Distance and duration can be calculated from the source to destination
+=======
+
+
+
+//Distance and duration can be calculated from the source to destination
+>>>>>>> Stashed changes
 
 var distanceParams = {
-    origins: '-33.89192157947345,151.13604068756104',
-    destinations: '-33.69727974097957,150.29047966003418',
-    waypoints: [{
-        location: '-3.821685, 150.413735'
-    }],
+    origin: '40.61862, -74.03071',
+    destination: '40.70609, -73.99686',
     mode: 'driving'
 };
+<<<<<<< Updated upstream
 gmAPI.distance(distanceParams, function (err, results){
     console.log(getMiles(results.rows[0].elements[0].distance.value));
     console.log(results.rows[0].elements[0].duration.value);
 });*/
+=======
+gmAPI.directions(distanceParams, function (err, results){
+    console.log(getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points),40.63241, -74.02958)));
+   // console.log(results.rows[0].elements[0].duration.value);
+});
+
+>>>>>>> Stashed changes
 var drivers = {
     "Paul": [[40.61862, -74.03071], [40.70609, -73.99686]]
     , "Alice": [[40.83275, -72.99247], [40.71278, -74.00594]]
@@ -32,26 +44,24 @@ var riders = {
     , "Harsh": [[40.69462, -73.98563], [40.75901, -73.98447]]
     , "Raj": [[40.68418, -73.97517], [40.75901, -73.98447]]
 };
+
+var range = {
+    "1": "tp1",
+    "2": "waste"
+}
 var drivermemo = {};
 //allocateRiders();
+<<<<<<< Updated upstream
 /*var allocateRiders = function (callback) {
     async.forEachOf(riders, function (ridervalue, ridername, callback) {
         drivermemo[ridername] = {};
         async.forEachOf(drivers, function (drivervalue, drivername, callback) {
             getDistance(drivername, ridername, function (dis) {
                 drivermemo[ridername][drivername] = dis;
-                callback();
-            });
-        }, function (err) {
-            // inner loop complete give call to outer loop
-            callback();
-        });
-    }, function (err) {
-        // All items are processed
-        // Here is the finished result
-        callback(undefined, drivermemo);
-    });
-};*/
+=======
+var waypoint = "";
+var count = 1;
+
 var allocateRiders = function (callback) {
     async.forEachOf(drivers, function (drivervalue, drivername, callback) {
         waypoint = "";
@@ -59,6 +69,88 @@ var allocateRiders = function (callback) {
         r = "";
         coordinates = -1;
         drivermemo[drivername] = [];
+        console.log("driver -> " + drivername);
+        async.forEachOf(range, function (rangevalue, rangename, callback) {
+            console.log("Range -> " + rangename);
+            count = 1;
+            async.forEachOf(riders, function (ridervalue, ridername, callback) {
+                console.log("rider -> " + ridername);
+                var directionParams = {};
+                var dis = [];
+                if (waypoint == "") {
+                    directionParams = {
+                        origin: drivers[drivername][0][0] + "," + drivers[drivername][0][1],
+                        destination: drivers[drivername][1][0] + "," + drivers[drivername][1][1],
+                        //waypoints: 'optimize:true|via:40.77113, -73.97419|40.84520, -73.87388',
+                        travelMode: 'DRIVING'
+                    };
+                } else {
+                    directionParams = {
+                        origin: drivers[drivername][0][0] + "," + drivers[drivername][0][1],
+                        destination: drivers[drivername][1][0] + "," + drivers[drivername][1][1],
+                        waypoints: 'optimize:true|via:' + waypoint,
+                        travelMode: 'DRIVING'
+                    };
+                }
+                gmAPI.directions(directionParams, function (err, results) {
+                    //This will calculate the closest distance of a point from a line.cons
+                    if (ridername in riders) {
+                        //console.log(JSON.stringify(results));
+                        var dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[ridername][0][0], riders[ridername][0][1]));
+                        var dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[ridername][1][0], riders[ridername][1][1]));
+                        console.log("DONE");
+                        dis = [dbeg > dend ? dend : dbeg, dbeg > dend ? 1 : 0];
+                        if ((dis[0] <= 1 && min == -1) || (dis[0] <= 1 && dis < min)) {
+                            min = dis[0];
+                            r = ridername;
+                            coordinates = dis[1];
+                        }
+                        console.log(r);
+                        console.log(Object.keys(riders).length);
+                        if (count++ == Object.keys(riders).length && (r in riders)) {
+                            console.log('r -> ' + r);
+                            drivermemo[drivername].push(r);
+                            waypoint = riders[r][coordinates][0] + "," + riders[r][coordinates][1];
+                            delete riders[r];
+
+                            count = 1;
+                        }
+                    }
+                    //callback();
+                });
+
+            }, function (err) {
+
+
+
+>>>>>>> Stashed changes
+                callback();
+            });
+        }, function (err) {
+            // inner loop complete give call to outer loop
+            console.log("wsq");
+            callback();
+        });
+    }, function (err) {
+        // All items are processed
+        // Here is the finished result
+        callback(undefined, drivermemo);
+    });
+<<<<<<< Updated upstream
+};*/
+var allocateRiders = function (callback) {
+=======
+};
+
+/*var allocateRiders = function (callback) {
+>>>>>>> Stashed changes
+    async.forEachOf(drivers, function (drivervalue, drivername, callback) {
+        waypoint = "";
+        min = -1;
+        r = "";
+        coordinates = -1;
+        drivermemo[drivername] = [];
+<<<<<<< Updated upstream
         count = 0;
         async.whilst(function () {
             return count < 2;
@@ -66,15 +158,26 @@ var allocateRiders = function (callback) {
             count++;
             async.forEachOf(riders, function (ridervalue, ridername, callback) {
                 getDistance(drivername, ridername, waypoint, function (dis) {
+=======
+        console.log(drivername);
+        console.log('start');
+        async.forEachOf(range, function (rangevalue, rangename, callback) {
+            async.forEachOf(riders, function (ridervalue, ridername, callback) {
+                //console.log(ridername);
+                getDistance(drivername, ridername, waypoint, function (dis) {
+
+>>>>>>> Stashed changes
                     if ((dis[0] <= 1 && min == -1) || (dis[0] <= 1 && dis < min)) {
                         min = dis[0];
                         r = ridername;
                         coordinates = dis[1];
                     }
+                    callback();
                 });
             }, function (err) {
                 // inner loop complete give call to outer loop
                 drivermemo[drivername].push(r);
+<<<<<<< Updated upstream
                 delete riders[ridername];
                 waypoint = riders[ridername][coordinates][0] + "," + riders[ridername][coordinates][1];
                 callback(null, count);
@@ -83,13 +186,26 @@ var allocateRiders = function (callback) {
             // 5 seconds have passed, n = 5
             callback();
         });
+=======
+                waypoint = riders[r][coordinates][0] + "," + riders[r][coordinates][1];
+                delete riders[r];
+                console.log('after inner for done');
+
+                callback();
+
+            });
+        }, function (err) {
+            callback();
+        });
+
+>>>>>>> Stashed changes
     }, function (err) {
         // All items are processed
         // Here is the finished result
-        console.log(drivermemo);
+        console.log('end');
         callback(undefined, drivermemo);
     });
-};
+};*/
 //This will make an object having each driver's shortest distance from rider. 
 //Rider will be allocated to the driver who has the least shortest distance and more over who has the distance < 1 mile. 
 //If none of the drivers is < 1 mile away, then rider won't be allocated to any driver.
@@ -158,6 +274,11 @@ allocateRiders(function (err, matches) {
 });*/
 //This calculates rider's shortest distance from driver's polyline
 function getDistance(driver, rider, waypoint, callback) {
+<<<<<<< Updated upstream
+=======
+    //console.log('in '+rider);
+
+>>>>>>> Stashed changes
     var directionParams = {};
     if (waypoint == "") {
         directionParams = {
@@ -165,6 +286,7 @@ function getDistance(driver, rider, waypoint, callback) {
             , destination: drivers[driver][1][0] + "," + drivers[driver][1][1], //waypoints: 'optimize:true|via:40.77113, -73.97419|40.84520, -73.87388',
             travelMode: 'DRIVING'
         };
+<<<<<<< Updated upstream
     }
     else {
         directionParams = {
@@ -172,12 +294,24 @@ function getDistance(driver, rider, waypoint, callback) {
             , destination: drivers[driver][1][0] + "," + drivers[driver][1][1]
             , waypoints: 'optimize:true|via:' + waypoint
             , travelMode: 'DRIVING'
+=======
+    } else {
+        directionParams = {
+            origin: drivers[driver][0][0] + "," + drivers[driver][0][1],
+            destination: drivers[driver][1][0] + "," + drivers[driver][1][1],
+            waypoints: 'optimize:true|via:' + waypoint,
+            travelMode: 'DRIVING'
+>>>>>>> Stashed changes
         };
     }
     gmAPI.directions(directionParams, function (err, results) {
         //This will calculate the closest distance of a point from a line.
         var dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[rider][0][0], riders[rider][0][1]));
         var dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results.routes[0].overview_polyline.points), riders[rider][1][0], riders[rider][1][1]));
+<<<<<<< Updated upstream
+=======
+        console.log("DONE");
+>>>>>>> Stashed changes
         callback([dbeg > dend ? dend : dbeg, dbeg > dend ? 1 : 0]);
     });
 }
