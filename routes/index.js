@@ -22,8 +22,7 @@ router.get('/home', function (req, res, next) {
         res.render('home', {
             title: 'Express'
         });
-    }
-    else {
+    } else {
         res.redirect('/');
     }
 });
@@ -32,8 +31,7 @@ router.get('/address', function (req, res, next) {
         res.render('address', {
             title: 'Express'
         });
-    }
-    else {
+    } else {
         res.redirect('/');
     }
 });
@@ -42,16 +40,15 @@ router.get('/driver', function (req, res, next) {
         res.render('driversetup', {
             title: 'Express'
         });
-    }
-    else {
+    } else {
         res.redirect('/');
     }
 });
 var connection = mysql.createConnection({
-    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com'
-    , user: 'root'
-    , password: 'ashwin92'
-    , database: 'dbzpool'
+    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com',
+    user: 'root',
+    password: 'ashwin92',
+    database: 'dbzpool'
 });
 connection.connect(function (err) {
     if (err) {
@@ -71,8 +68,7 @@ router.post('/loginpost', function (req, res) {
             req.session.login = "set";
             req.session.email = email;
             res.redirect('/home');
-        }
-        else {
+        } else {
             res.redirect('/');
         }
     });
@@ -92,7 +88,7 @@ router.post('/signupost', function (req, res) {
     });
 });
 
-router.post('/advance', function(req, res){
+router.post('/advance', function (req, res) {
     var ridrordrive = req.body.riderdrive;
     var slot = req.body.slot;
     var time1 = req.body.time1;
@@ -104,36 +100,49 @@ router.post('/advance', function(req, res){
     console.log(date);
     console.log(fomatteddate);
     var numriders = 2;
-    
-    connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + fomatteddate + '","' + numriders + '","'+dateFormat(now, "yyyy-mm-dd hh:MM:ss")+'","'+ email +'")', function (err) {
+
+    connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + fomatteddate + '","' + numriders + '","' + dateFormat(now, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
         res.redirect('/home');
     });
-    
-    
+
+
 });
 
 
-router.post('/instant', function(req, res){
+router.post('/instant', function (req, res) {
     var ridrordrive = req.body.riderdrive;
     //var slot = req.body.slot;
     var now = new Date();
-    var nowback =now;
+    var nowback = now;
     var time1 = dateFormat(now, "hh:MM:ss");
-    now.setTime(now.getTime()+15*60*1000);
+    now.setTime(now.getTime() + 15 * 60 * 1000);
     var time2 = dateFormat(now, "hh:MM:ss");
     var email = req.session.email;
     var date = dateFormat(nowback, "yyyy-mm-dd");
     console.log(dateFormat(nowback, "YYYY-mm-dd hh:MM:ss"));
     //console.log(date);
     var numriders = 2;
-    
-    connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + date + '","' + numriders + '","'+dateFormat(nowback, "yyyy-mm-dd hh:MM:ss")+'","'+ email +'")', function (err) {
+
+    connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + date + '","' + numriders + '","' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
         res.redirect('/home');
     });
-    
-    
+
+
+});
+
+router.get('/pythontest', function (req, res) {
+    pyshell.on('message', function (message) {
+        // received a message sent from the Python script (a simple "print" statement)
+        console.log(message);
+    });
+
+    // end the input stream and allow the process to exit
+    pyshell.end(function (err) {
+        if (err) throw err;
+        //  console.log('finished');
+    });
 });
 
 module.exports = router;
