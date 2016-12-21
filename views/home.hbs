@@ -23,15 +23,15 @@
             <br>
             <br>
             <h3>Now ride/drive in just one click!</h2>
-            <form action="" method="post">
+            <form action="/instant" method="post">
                 <h1><b>Ride/Drive</b></h1>
                 <br>
                 <div class="type">
-                    <input type="radio" name="riderdrive" required checked class="radio" id="radio1">
+                    <input type="radio" name="riderdrive" required checked class="radio" id="radio1" value="rider">
                     <label class="radiolabel" for="radio1">Ride</label>
                 </div>
                 <div class="type">
-                    <input type="radio" name="riderdrive" required class="radio" id="radio2">
+                    <input type="radio" name="riderdrive" required class="radio" id="radio2" value="driver">
                     <label class="radiolabel" for="radio2">Drive</label>
                 </div>
                 <br/>
@@ -60,18 +60,18 @@
             <br>
             <br>
             <h3>Now ride/drive in just one click!</h2>
-            <form action="" method="post">
+            <form action="/advance" method="post">
                 <h2><b>Ride/Drive</b></h2>
                 <div class="type">
-                    <input type="radio" name="riderdrive" required checked class="radio" id="radio3">
+                    <input type="radio" name="riderdrive" required checked class="radio" id="radio3" value="rider">
                     <label class="radiolabel" for="radio3">Ride</label>
                 </div>
                 <div class="type">
-                    <input type="radio" name="riderdrive" required class="radio" id="radio4">
+                    <input type="radio" name="riderdrive" required class="radio" id="radio4" value="driver">
                     <label class="radiolabel" for="radio4">Drive</label>
                 </div>
                 <h2><b>Select Slot</b></h2>
-                <select id="slot" class="slotselect" onchange="populateTimeSlots();">
+                <select id="slot" name="slot" class="slotselect" onchange="populateTimeSlots();">
                     <option value="">--Select a Slot--</option>
                 </select>
                 <script>
@@ -79,17 +79,17 @@
                     var datearray = [];
                     var hr1 = date.getHours();
                     if (hr1 >= 7 && hr1 < 10) {
-                        datearray.push("Morning "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear());
-                        datearray.push("Evening "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear());
+                        datearray.push("Morning "+(date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear());
+                        datearray.push("Evening "+(date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear());
                     }
                     else if (hr1 >= 10 && hr1 < 19) {
-                        datearray.push("Evening "+date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear());
+                        datearray.push("Evening "+(date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear());
                     }
                     
                     for(var i=1;i<=6;i++){
                         var newdate = new Date(date.getTime()+ i*24*60*60*1000);
-                        datearray.push("Morning "+newdate.getMonth()+"/"+newdate.getDate()+"/"+newdate.getFullYear());
-                        datearray.push("Evening "+newdate.getMonth()+"/"+newdate.getDate()+"/"+newdate.getFullYear());
+                        datearray.push("Morning "+(newdate.getMonth()+1)+"/"+newdate.getDate()+"/"+newdate.getFullYear());
+                        datearray.push("Evening "+(newdate.getMonth()+1)+"/"+newdate.getDate()+"/"+newdate.getFullYear());
                         
                     }
                     var slotid = document.getElementById("slot");
@@ -101,11 +101,11 @@
                 </script>
                 
                 <h2><b>Choose your time range</b></h2>
-                <select id="time1" class="slotselect">
+                <select id="time1" name="time1" class="slotselect">
                     <option value="">Choose Time</option>
                 </select>
                 to
-                <select id="time2" class="slotselect">
+                <select id="time2" name="time2" class="slotselect">
                     <option value="">Choose Time</option>
                 </select>
                 <script>

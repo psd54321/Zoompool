@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var request = require("request");
 var mysql = require('mysql');
+var dateFormat = require('dateformat');
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {
@@ -66,6 +67,7 @@ router.post('/loginpost', function (req, res) {
         if (err) throw err;
         if (rows.length > 0) {
             req.session.login = "set";
+            req.session.email = email;
             res.redirect('/home');
         }
         else {
@@ -87,4 +89,49 @@ router.post('/signupost', function (req, res) {
         res.redirect('/');
     });
 });
+
+router.post('/advance', function(req, res){
+    var ridrordrive = req.body.riderdrive;
+    var slot = req.body.slot;
+    var time1 = req.body.time1;
+    var time2 = req.body.time2;
+    var email = req.session.email;
+    var date = slot.split(" ")[1];
+    var fomatteddate = dateFormat(date, "yyyy-mm-dd");
+    var now = new Date();
+    console.log(date);
+    console.log(fomatteddate);
+    var numriders = 2;
+    
+    connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + fomatteddate + '","' + numriders + '","'+dateFormat(now, "yyyy-mm-dd hh:MM:ss")+'","'+ email +'")', function (err) {
+        if (err) throw err;
+        res.redirect('/home');
+    });
+    
+    
+});
+
+
+router.post('/instant', function(req, res){
+    var ridrordrive = req.body.riderdrive;
+    //var slot = req.body.slot;
+    var now = new Date();
+    var nowback =now;
+    var time1 = dateFormat(now, "hh:MM:ss");
+    now.setTime(now.getTime()+15*60*1000);
+    var time2 = dateFormat(now, "hh:MM:ss");
+    var email = req.session.email;
+    var date = dateFormat(nowback, "yyyy-mm-dd");
+    console.log(dateFormat(nowback, "YYYY-mm-dd hh:MM:ss"));
+    //console.log(date);
+    var numriders = 2;
+    
+    connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + date + '","' + numriders + '","'+dateFormat(nowback, "yyyy-mm-dd hh:MM:ss")+'","'+ email +'")', function (err) {
+        if (err) throw err;
+        res.redirect('/home');
+    });
+    
+    
+});
+
 module.exports = router;
