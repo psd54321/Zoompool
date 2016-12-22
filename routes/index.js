@@ -3,8 +3,8 @@ var router = express.Router();
 var request = require("request");
 var mysql = require('mysql');
 var dateFormat = require('dateformat');
-var PythonShell = require('python-shell');
-var pyshell = new PythonShell('worker_instant.py');
+//var PythonShell = require('python-shell');
+//var pyshell = new PythonShell('worker_instant.py');
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {
@@ -22,7 +22,8 @@ router.get('/home', function (req, res, next) {
         res.render('home', {
             title: 'Express'
         });
-    } else {
+    }
+    else {
         res.redirect('/');
     }
 });
@@ -31,7 +32,8 @@ router.get('/address', function (req, res, next) {
         res.render('address', {
             title: 'Express'
         });
-    } else {
+    }
+    else {
         res.redirect('/');
     }
 });
@@ -40,15 +42,16 @@ router.get('/driver', function (req, res, next) {
         res.render('driversetup', {
             title: 'Express'
         });
-    } else {
+    }
+    else {
         res.redirect('/');
     }
 });
 var connection = mysql.createConnection({
-    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com',
-    user: 'root',
-    password: 'ashwin92',
-    database: 'dbzpool'
+    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com'
+    , user: 'root'
+    , password: 'ashwin92'
+    , database: 'dbzpool'
 });
 connection.connect(function (err) {
     if (err) {
@@ -68,7 +71,8 @@ router.post('/loginpost', function (req, res) {
             req.session.login = "set";
             req.session.email = email;
             res.redirect('/home');
-        } else {
+        }
+        else {
             res.redirect('/');
         }
     });
@@ -87,7 +91,6 @@ router.post('/signupost', function (req, res) {
         res.redirect('/');
     });
 });
-
 router.post('/advance', function (req, res) {
     var ridrordrive = req.body.riderdrive;
     var slot = req.body.slot;
@@ -100,21 +103,17 @@ router.post('/advance', function (req, res) {
     console.log(date);
     console.log(fomatteddate);
     var numriders = 2;
-
     connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + fomatteddate + '","' + numriders + '","' + dateFormat(now, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
         res.redirect('/home');
     });
-
     console.log("I am here!!");
-    PythonShell.run('worker_instant.py', function (err) {
+    /*PythonShell.run('worker_instant.py', function (err) {
         if (err) throw err;
         console.log('finished');
     });
-    console.log("Something did happen!!");
+    console.log("Something did happen!!");*/
 });
-
-
 router.post('/instant', function (req, res) {
     var ridrordrive = req.body.riderdrive;
     //var slot = req.body.slot;
@@ -128,13 +127,9 @@ router.post('/instant', function (req, res) {
     console.log(dateFormat(nowback, "YYYY-mm-dd hh:MM:ss"));
     //console.log(date);
     var numriders = 2;
-
     connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + date + '","' + numriders + '","' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
         res.redirect('/home');
     });
-
-
 });
-
 module.exports = router;
