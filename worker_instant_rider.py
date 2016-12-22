@@ -147,6 +147,7 @@ for drivername, drivervalue in drivers.iteritems():
                 drivermemo[drivername].append(ridername+" "+str(riderschedule[0]))
                 sql = "select * from confirmedtrip where tripID = '"+drivername+"'";
                 cursor.execute(sql)
+                results = cursor.fetchall()
                 # Fetch all the rows in a list of lists.
                 if len(drivermemo[drivername]) == 2 or len(drivermemo[drivername]) == 1 :
                     sql = "update trip set allocated=%d where tripid=%d" % (1,int(drivername));
@@ -158,7 +159,7 @@ for drivername, drivervalue in drivers.iteritems():
                     #print sql;
                     cursor.execute(sql)
                     db.commit()
-                results = cursor.fetchall()
+            
                 if(len(results)>0):
                     if(len(drivermemo[drivername])==2):
                         sql = "update confirmedtrip set driver = '"+drivername+"', rider1='"+drivermemo[drivername][0].split(" ")[0]+"', rider1_time='"+drivermemo[drivername][0].split(" ")[1]+"',rider2='"+drivermemo[drivername][1].split(" ")[0]+"',rider2_time='"+drivermemo[drivername][1].split(" ")[1]+"' where tripID ='" +drivername+"'";
