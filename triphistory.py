@@ -44,31 +44,36 @@ for row in results:
             sql = "select * from confirmedtrip where rider1="+str(tripid)+" or rider2="+str(tripid)+" limit 1"
             cursor.execute(sql)
             resultsc = cursor.fetchall()
-            sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(tripid)+" and t.email=c.email limit 1";
-            cursor.execute(sql)
-            resultsd = cursor.fetchall()
-            driver = resultsd[0][0]
-            if(resultsc[0][3]==tripid):
-                ride_time = resultsc[0][1]
-            else:
-                ride_time = resultsc[0][5]
-            ridedate = resultsc[0][6]
+            if(resultsc.length!=0):
+                sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(tripid)+" and t.email=c.email limit 1";
+                cursor.execute(sql)
+                resultsd = cursor.fetchall()
+                if(resultsd.length!=0):
+                    driver = resultsd[0][0]
+                if(resultsc[0][3]==tripid):
+                    ride_time = resultsc[0][1]
+                else:
+                    ride_time = resultsc[0][5]
+                ridedate = resultsc[0][6]
         else:
             sql = "select * from confirmedtrip where driver="+str(tripid)+" limit 1"
             cursor.execute(sql)
             resultsc = cursor.fetchall()
-            sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(resultsc[0][3])+" and t.email=c.email limit 1";
-            cursor.execute(sql)
-            resultsd = cursor.fetchall()
-            rider1 = resultsd[0][0]
-            rider1_time = resultsc[0][1]
-            if(resultsc[0][4]!=None):
-                sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(resultsc[0][4])+" and t.email=c.email limit 1";
+            if(resultsc.length!=0):
+                sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(resultsc[0][3])+" and t.email=c.email limit 1";
                 cursor.execute(sql)
                 resultsd = cursor.fetchall()
-                rider2 = resultsd[0][0]
-                rider2_time = resultsc[0][1]
-            ridedate = resultsc[0][6]
+                if(resultsd.length!=0):
+                    rider1 = resultsd[0][0]
+                    rider1_time = resultsc[0][1]
+                if(resultsc[0][4]!=None):
+                    sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(resultsc[0][4])+" and t.email=c.email limit 1";
+                    cursor.execute(sql)
+                    resultsd = cursor.fetchall()
+                    if(resultsd.length!=0):
+                        rider2 = resultsd[0][0]
+                        rider2_time = resultsc[0][1]
+                ridedate = resultsc[0][6]
     tablestr+="<tr><td>"+ridetype+"</td><td>"+str(date)+"</td><td>"+status+"</td><td>"+driver+"</td><td>"+rider1+"<br>"+str(rider1_time)+"</td><td>"+rider2+"<br>"+str(rider2_time)+"</td><td>"+str(ridedate)+"</td><td>"+str(ride_time)+"</td></tr>"
 print tablestr+"</table></div>"
     
