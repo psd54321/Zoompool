@@ -4,11 +4,57 @@ import polyline
 import json
 import math
 import MySQLdb
-key = 'AIzaSyB45rLge0qJX25y20ejv_B9iJG-mHLwt5E'
+import boto.ses
+
+AWS_ACCESS_KEY = 'AKIAJ2X7BFRZTIO2MVSQ'  
+AWS_SECRET_KEY = '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'
+class Email(object):  
+    def __init__(self, to, subject):
+        self.to = to
+        self.subject = subject
+        self._html = None
+        self._text = None
+        self._format = 'html'
+
+    def html(self, html):
+        self._html = html
+
+    def text(self, text):
+        self._text = text
+
+    def send(self, from_addr=None):
+        body = self._html
+
+        if isinstance(self.to, basestring):
+            self.to = [self.to]
+        if not from_addr:
+            from_addr = 'sg4423@nyu.edu'
+        if not self._html and not self._text:
+            raise Exception('You must provide a text or html body.')
+        if not self._html:
+            self._format = 'text'
+            body = self._text
+
+        connection = boto.ses.connect_to_region(
+            'us-east-1',
+            aws_access_key_id=AWS_ACCESS_KEY, 
+            aws_secret_access_key=AWS_SECRET_KEY
+        )
+
+        return connection.send_email(
+            from_addr,
+            self.subject,
+            None,
+            self.to,
+            format=self._format,
+            text_body=self._text,
+            html_body=self._html
+        )
+key = 'AIzaSyCaiXqS-_gbYOJh9N_SfktWaaqvXI3yl1A'
 gmaps = googlemaps.Client(key=key)
 db = MySQLdb.connect("zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com","root","ashwin92","dbzpool" )
 cursor = db.cursor()
-sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype, t.time1, t.time2, t.date, t.allocated FROM customer as c, trip as t where c.email=t.email and t.allocated = 0";
+sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype, t.time1, t.time2, t.date, t.allocated,t.tripid FROM customer as c, trip as t where c.email=t.email and t.allocated = 0 order by homelat, homelong, worklat, worklong";
 drivers = {}
 riders = {} 
 driverschedule = {}
@@ -39,26 +85,31 @@ for row in results:
   #print date1
   allocated = row[9]
   #print allocated
+  tripid = row[10]
+  #print date1
   if ridetype == "driver":
-        drivers[email] = []
-        drivers[email].append([homelat,homelong])
-        drivers[email].append([worklat,worklong])
-        driverschedule[email] = []
-        driverschedule[email].append(time1)
-        driverschedule[email].append(time2)
-        #print time1<time2
+        if((datetime.min+time1).time()>time() and date1>=date.today()):
+            drivers[str(tripid)] = []
+            drivers[str(tripid)].append([homelat,homelong])
+            drivers[str(tripid)].append([worklat,worklong])
+            driverschedule[str(tripid)] = []
+            driverschedule[str(tripid)].append(time1)
+            driverschedule[str(tripid)].append(time2)
   else:
-        riders[email] = []
-        riders[email].append([homelat,homelong])
-        riders[email].append([worklat,worklong])
-        riderschedule[email] = []
-        riderschedule[email].append(time1)
-        riderschedule[email].append(time2)
-        #print time1>time2
+        if((datetime.min+time1).time()>time() and date1>=date.today()):
+            riders[str(tripid)] = []
+            riders[str(tripid)].append([homelat,homelong])
+            riders[str(tripid)].append([worklat,worklong])
+            riderschedule[str(tripid)] = []
+            riderschedule[str(tripid)].append(time1)
+            riderschedule[str(tripid)].append(time2)
+        
 
 # disconnect from server
-print riderschedule
-db.close()
+#print riderschedule
+#print driverschedule
+
+#db.close()
 '''drivers = {
     "Paul": [[40.61862, -74.03071], [40.70609, -73.99686]],
     "Alice": [[40.83275, -72.99247], [40.71278, -74.00594]]
@@ -66,7 +117,7 @@ db.close()
 riders = {
     "Chris": [[40.63241, -74.02958], [40.69462, -73.98563]],
     "Ashwin": [[40.77113, -73.97419], [40.82563, -73.93024]],
-    "Prathamesh": [[40.84520, -73.87388], [40.84520, -73.87388]],
+    "Prathamesh": [[40.84520, -73.87388], [40.84520, -73.87398]],
     "Harsh": [[40.69462, -73.98563], [40.75901, -73.98447]],
     "Raj": [[40.68418, -73.97517], [40.75901, -73.98447]]
 }'''
@@ -231,7 +282,7 @@ for drivername, drivervalue in drivers.iteritems():
             start_time = matrix["rows"][0]["elements"][0]["duration"]["value"]
             end_distance = getMiles(matrix["rows"][1]["elements"][1]["distance"]["value"])
             end_time = matrix["rows"][1]["elements"][1]["duration"]["value"]
-            print start_time;
+            #print start_time;
             newdrivertime1 = driverschedule[drivername][0]+timedelta(seconds=start_time)
             newdrivertime2 = driverschedule[drivername][1]+timedelta(seconds=start_time)
             if(riderschedule[ridername][0]>=newdrivertime1 and riderschedule[ridername][0]<=newdrivertime2):
@@ -268,10 +319,61 @@ for drivername, drivervalue in drivers.iteritems():
                 #print minimum
 
         if(r in riders):
-            drivermemo[drivername].append(r+" "+str(riderschedule[ridername][0]))
+            drivermemo[drivername].append(str(r)+" "+str(riderschedule[ridername][0]))
             waypoint = str(riders[r][coordinates][0]) + "," + str(riders[r][coordinates][1])
             riders.pop(r,None)
 
-print drivermemo
+#print drivermemo
+#print str(cursor)
+for allocation,allocationlist in drivermemo.iteritems():
+    if len(allocationlist) == 2:
+        sql = "update trip set allocated=%d where tripid=%d" % (1,int(allocation));
+        #print sql;
+        cursor.execute(sql)
+        db.commit()
+    for rider in allocationlist:
+        sql = "update trip set allocated=%d where tripid=%d" % (1,int(rider.split(" ")[0]));
+        #print sql;
+        cursor.execute(sql)
+        db.commit()
+    sql = "select * from confirmedtrip where tripID = '"+allocation+"'";
+    cursor.execute(sql)
+    # Fetch all the rows in a list of lists.
+    results = cursor.fetchall()
+    if(len(results)>0):
+        if(len(allocationlist)==2):
+            sql = "update confirmedtrip set driver = '"+allocation+"', rider1='"+allocationlist[0].split(" ")[0]+"', rider1_time='"+allocationlist[0].split(" ")[1]+"',rider2='"+allocationlist[1].split(" ")[0]+"',rider2_time='"+allocationlist[1].split(" ")[1]+"' where tripID ='" +allocation+"'";
+            cursor.execute(sql)
+            db.commit()
+        elif(len(allocationlist)==1):
+            sql = "update confirmedtrip set driver = '"+allocation+"', rider1='"+allocationlist[0].split(" ")[0]+"', rider1_time='"+allocationlist[0].split(" ")[1]+"' where tripID ='" +allocation+"'";
+            cursor.execute(sql)
+            db.commit()
+        else:
+            sql = "update confirmedtrip set driver = '"+allocation+"' where tripID ='" +allocation+"'";
+            cursor.execute(sql)
+            db.commit()
+    else:
+        if(len(allocationlist)==2):
+            sql = "insert into confirmedtrip(tripID,driver,rider1,rider1_time,rider2,rider2_time) values ('" +allocation+"','"+allocation+"','"+allocationlist[0].split(" ")[0]+"', '"+allocationlist[0].split(" ")[1]+"','"+allocationlist[1].split(" ")[0]+"','"+allocationlist[1].split(" ")[1]+"')";
+            #print sql;
+            cursor.execute(sql)
+            db.commit()
+        elif(len(allocationlist)==1):
+            sql = "insert into confirmedtrip(tripID,driver,rider1,rider1_time) values ('" +allocation+"','"+allocation+"','"+allocationlist[0].split(" ")[0]+"', '"+allocationlist[0].split(" ")[1]+"')";
+            cursor.execute(sql)
+            db.commit()
+        else:
+            sql = "insert into confirmedtrip(tripID,driver) values ('" +allocation+"','"+allocation+"')";
+            cursor.execute(sql)
+            db.commit()
+
+db.close()
+    
+email = Email(to='psd281@nyu.edu', subject='OMG You are HTML Awesome')  
+email.text('This is a text body. Foo bar.')  
+email.html('<html><body>This is a text body. <strong>Foo bar.</strong></body></html>')  # Optional  
+email.send() 
+    
             
             
