@@ -47,16 +47,17 @@ for row in results:
             cursor.execute(sql)
             resultsc = cursor.fetchall()
             if(len(resultsc)!=0):
-                sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(tripid)+" and t.email=c.email limit 1";
+                sql = "select c.fullname,t.date from customer as c,trip as t  where t.tripid="+str(tripid)+" and t.email=c.email limit 1";
                 cursor.execute(sql)
                 resultsd = cursor.fetchall()
                 if(len(resultsd)!=0):
                     driver = resultsd[0][0]
+                    ridedate = resultsd[0][1]
                 if(resultsc[0][3]==tripid):
                     ride_time = resultsc[0][1]
                 else:
                     ride_time = resultsc[0][5]
-                ridedate = resultsc[0][6]
+                
         else:
             sql = "select * from confirmedtrip where driver="+str(tripid)+" limit 1"
             cursor.execute(sql)
@@ -65,6 +66,7 @@ for row in results:
                 sql = "select c.fullname from customer as c,trip as t  where t.tripid="+str(resultsc[0][3])+" and t.email=c.email limit 1";
                 cursor.execute(sql)
                 resultsd = cursor.fetchall()
+                ridedate = date
                 if(len(resultsd)!=0):
                     rider1 = resultsd[0][0]
                     rider1_time = resultsc[0][1]
