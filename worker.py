@@ -15,7 +15,8 @@ drivers = {}
 riders = {} 
 driverschedule = {}
 riderschedule = {}
-
+driverdate = {}
+riderdate = {}
 # Execute the SQL command
 cursor.execute(sql)
 # Fetch all the rows in a list of lists.
@@ -51,6 +52,7 @@ for row in results:
             driverschedule[str(tripid)] = []
             driverschedule[str(tripid)].append(time1)
             driverschedule[str(tripid)].append(time2)
+            driverdate[str(tripid)] = date1
   else:
         if((datetime.min+time1).time()>time() and date1>=date.today()):
             riders[str(tripid)] = []
@@ -59,7 +61,7 @@ for row in results:
             riderschedule[str(tripid)] = []
             riderschedule[str(tripid)].append(time1)
             riderschedule[str(tripid)].append(time2)
-        
+            riderdate[str(tripid)] = date1 
 
 # disconnect from server
 #print riderschedule
@@ -231,52 +233,53 @@ for drivername, drivervalue in drivers.iteritems():
         #print "++++++++++++++++++++++++++++++"
         for ridername, ridervalue in riders.iteritems():
             #print ridername
-            origins = [{"lat": drivervalue[0][0],"lng": drivervalue[0][1]},{"lat": drivervalue[1][0],"lng": drivervalue[1][1]}]
-            destinations = [{"lat": ridervalue[0][0],"lng": ridervalue[0][1]},{"lat": ridervalue[1][0],"lng": ridervalue[1][1]}]
-            matrix = gmaps.distance_matrix(origins, destinations,mode="driving")
-            start_distance = getMiles(matrix["rows"][0]["elements"][0]["distance"]["value"])
-            start_time = matrix["rows"][0]["elements"][0]["duration"]["value"]
-            end_distance = getMiles(matrix["rows"][1]["elements"][1]["distance"]["value"])
-            end_time = matrix["rows"][1]["elements"][1]["duration"]["value"]
-            #print str(drivername)+" "+str(ridername)+" "+str(start_distance);
-            #print str(drivername)+" "+str(ridername)+" "+str(end_distance);
-            newdrivertime1 = driverschedule[drivername][0]+timedelta(seconds=start_time)
-            newdrivertime2 = driverschedule[drivername][1]+timedelta(seconds=start_time)
-            #print str(drivername)+" "+str(ridername)+" start:"+str(newdrivertime1)+" end:"+str(newdrivertime2)
-            #print riderschedule[ridername][0]>=newdrivertime1
-            if((riderschedule[ridername][0]>=newdrivertime1 and riderschedule[ridername][0]<=newdrivertime2) or (riderschedule[ridername][0]<=newdrivertime1 and riderschedule[ridername][1]>=newdrivertime2) or (riderschedule[ridername][1]>=newdrivertime1 and riderschedule[ridername][1]<=newdrivertime2)):
-                results = ""
-                if (waypoint == ""):
-                    results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
-                                         str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
-                                         mode="driving",
-                                         departure_time=now)
-                else:
-                    results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
-                                         str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
-                                         mode="driving",
-                                         waypoints=[waypoint],
-                                         optimize_waypoints=True,
-                                         departure_time=now)
-                dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][0][0], riders[ridername][0][1]))
-                dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][1][0], riders[ridername][1][1]))
+            if(riderdate[ridername]==driverdate[drivername]):
+                origins = [{"lat": drivervalue[0][0],"lng": drivervalue[0][1]},{"lat": drivervalue[1][0],"lng": drivervalue[1][1]}]
+                destinations = [{"lat": ridervalue[0][0],"lng": ridervalue[0][1]},{"lat": ridervalue[1][0],"lng": ridervalue[1][1]}]
+                matrix = gmaps.distance_matrix(origins, destinations,mode="driving")
+                start_distance = getMiles(matrix["rows"][0]["elements"][0]["distance"]["value"])
+                start_time = matrix["rows"][0]["elements"][0]["duration"]["value"]
+                end_distance = getMiles(matrix["rows"][1]["elements"][1]["distance"]["value"])
+                end_time = matrix["rows"][1]["elements"][1]["duration"]["value"]
+                #print str(drivername)+" "+str(ridername)+" "+str(start_distance);
+                #print str(drivername)+" "+str(ridername)+" "+str(end_distance);
+                newdrivertime1 = driverschedule[drivername][0]+timedelta(seconds=start_time)
+                newdrivertime2 = driverschedule[drivername][1]+timedelta(seconds=start_time)
+                #print str(drivername)+" "+str(ridername)+" start:"+str(newdrivertime1)+" end:"+str(newdrivertime2)
+                #print riderschedule[ridername][0]>=newdrivertime1
+                if((riderschedule[ridername][0]>=newdrivertime1 and riderschedule[ridername][0]<=newdrivertime2) or (riderschedule[ridername][0]<=newdrivertime1 and riderschedule[ridername][1]>=newdrivertime2) or (riderschedule[ridername][1]>=newdrivertime1 and riderschedule[ridername][1]<=newdrivertime2)):
+                    results = ""
+                    if (waypoint == ""):
+                        results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
+                                             str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
+                                             mode="driving",
+                                             departure_time=now)
+                    else:
+                        results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
+                                             str(drivers[drivername][1][0]) + "," + str(drivers[drivername][1][1]),
+                                             mode="driving",
+                                             waypoints=[waypoint],
+                                             optimize_waypoints=True,
+                                             departure_time=now)
+                    dbeg = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][0][0], riders[ridername][0][1]))
+                    dend = getMiles(bdccGeoDistanceToPolyMtrs(polyline.decode(results[0]['overview_polyline']['points']), riders[ridername][1][0], riders[ridername][1][1]))
 
-                dis = []
-                if(dbeg > dend):
-                    dis.append(dend)
-                else:
-                    dis.append(dbeg)
-                if(dbeg > dend):
-                    dis.append(1)
-                else:
-                    dis.append(0)
+                    dis = []
+                    if(dbeg > dend):
+                        dis.append(dend)
+                    else:
+                        dis.append(dbeg)
+                    if(dbeg > dend):
+                        dis.append(1)
+                    else:
+                        dis.append(0)
 
-                if ((dis[0] <= 1 and minimum == -1) or (dis[0] <= 1 and dis[0] < minimum)):
-                    minimum = dis[0]
-                    r = ridername
-                    coordinates = dis[1]
-                #print minimum
-                #print minimum
+                    if ((dis[0] <= 1 and minimum == -1) or (dis[0] <= 1 and dis[0] < minimum)):
+                        minimum = dis[0]
+                        r = ridername
+                        coordinates = dis[1]
+                    #print minimum
+                    #print minimum
         if(r in riders):
             
             drivermemo[drivername].append(str(r)+" "+str(riderschedule[ridername][0]))

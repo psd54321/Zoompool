@@ -17,7 +17,7 @@ sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype,
 riders = {}
 
 riderschedule = {}
-
+riderdate = {}
 
 # Execute the SQL command
 cursor.execute(sql)
@@ -54,6 +54,7 @@ for row in results:
             riderschedule[str(tripid)] = []
             riderschedule[str(tripid)].append(time1)
             riderschedule[str(tripid)].append(time2)
+            riderdate[str(tripid)] = date1
 #print time(9,16,55)
 '''drivers = {
     "Paul": [[40.61862, -74.03071], [40.70609, -73.99686]],
@@ -88,6 +89,7 @@ drivers.append([float(results[0][3]),float(results[0][4])])
 #riderschedule = datetime(2000,1,1,9,30,0)
 #print str(results[0][6])
 drivermemo ={}
+driverdate = results[0][8]
 #print drivers
 def getMiles(i):
     return i * 0.000621371192
@@ -116,7 +118,7 @@ matrix = []
 #pp = pprint.PrettyPrinter(indent=4)
 for ridername, ridervalue in riders.iteritems(): 
     #print drivername
-    if (drivername not in drivermemo) or (len(drivermemo[drivername])<2):
+    if (((drivername not in drivermemo) or (len(drivermemo[drivername])<2)) and (riderdate[ridername]==driverdate)):
             #print str(drivervalue[0][0])+" "+str(drivervalue[0][1])+"::::"+str(drivervalue[1][0])+" "+ str(drivervalue[1][1])
             #print str(rider[0][0])+" "+str(rider[0][1])+"::::"+str(rider[1][0])+" "+str(rider[1][1])
             origins = [{"lat": drivers[0][0],"lng": drivers[0][1]},{"lat": drivers[1][0],"lng": drivers[1][1]}]

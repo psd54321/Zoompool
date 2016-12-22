@@ -17,7 +17,7 @@ sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype,
 drivers = {}
 
 driverschedule = {}
-
+driverdate = {}
 
 # Execute the SQL command
 cursor.execute(sql)
@@ -54,6 +54,7 @@ for row in results:
             driverschedule[str(tripid)] = []
             driverschedule[str(tripid)].append(time1)
             driverschedule[str(tripid)].append(time2)
+            driverdate[str(tripid)] = date1
 #print time(9,16,55)
 '''drivers = {
     "Paul": [[40.61862, -74.03071], [40.70609, -73.99686]],
@@ -72,6 +73,7 @@ driverschedule = {
     "Raj": datetime(2000,1,1,9,16,55)
 }'''
 ridername = sys.argv[1]
+
 #ridername = '7'
 sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype, t.time1, t.time2, t.date, t.allocated,t.tripid FROM customer as c, trip as t where c.email=t.email and t.tripid = '"+ridername+"'";
 #print sql
@@ -81,6 +83,7 @@ riderschedule = []
 rider = []
 riderschedule.append(results[0][6])
 riderschedule.append(results[0][7])
+riderdate = results[0][8]
 #riderschedule[str(tripid)].append(time2)
 #rider = [[40.63241, -74.02958], [40.69462, -73.98563]]
 rider.append([float(results[0][1]),float(results[0][2])])
@@ -116,7 +119,7 @@ matrix = []
 #pp = pprint.PrettyPrinter(indent=4)
 for drivername, drivervalue in drivers.iteritems(): 
     #print drivername
-    if (drivername not in drivermemo) or (len(drivermemo[drivername])<2):
+    if (((drivername not in drivermemo) or (len(drivermemo[drivername])<2)) and driverdate[drivername] == riderdate):
             #print str(drivervalue[0][0])+" "+str(drivervalue[0][1])+"::::"+str(drivervalue[1][0])+" "+ str(drivervalue[1][1])
             #print str(rider[0][0])+" "+str(rider[0][1])+"::::"+str(rider[1][0])+" "+str(rider[1][1])
             origins = [{"lat": drivervalue[0][0],"lng": drivervalue[0][1]},{"lat": drivervalue[1][0],"lng": drivervalue[1][1]}]
