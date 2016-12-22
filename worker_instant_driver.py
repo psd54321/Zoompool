@@ -144,7 +144,7 @@ for ridername, ridervalue in riders.iteritems():
                 drivermemo[str(drivername)].append(ridername+" "+str(riderschedule[ridername][0]))
                 
                 if len(drivermemo[str(drivername)]) == 2 or len(drivermemo[str(drivername)]) == 1:
-                    sql = "update trip set allocated=%d where tripid=%d" % (1,drivername);
+                    sql = "update trip set allocated=%d where tripid=%d" % (1,int(drivername));
                     #print sql;
                     cursor.execute(sql)
                     db.commit()
