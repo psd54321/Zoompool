@@ -233,7 +233,8 @@ router.post('/instant', function (req, res) {
     connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + date + '","' + numriders + '","' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
 
-        connection.query('SELECT tripid FROM customer where book_time="' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '"', function (err, rows, fields) {
+        console.log('SELECT tripid FROM customer where book_time="' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '"');
+        connection.query('SELECT tripid FROM trip where book_time="' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '"', function (err, rows, fields) {
 
             var options = {
                 args: [rows[0].tripid],
