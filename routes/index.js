@@ -36,7 +36,8 @@ router.get('/home', function (req, res, next) {
         res.render('home', {
             title: 'Express'
         });
-    } else {
+    }
+    else {
         res.redirect('/');
     }
 });
@@ -45,7 +46,8 @@ router.get('/address', function (req, res, next) {
         res.render('address', {
             title: 'Express'
         });
-    } else {
+    }
+    else {
         res.redirect('/');
     }
 });
@@ -54,15 +56,16 @@ router.get('/driver', function (req, res, next) {
         res.render('driversetup', {
             title: 'Express'
         });
-    } else {
+    }
+    else {
         res.redirect('/');
     }
 });
 var connection = mysql.createConnection({
-    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com',
-    user: 'root',
-    password: 'ashwin92',
-    database: 'dbzpool'
+    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com'
+    , user: 'root'
+    , password: 'ashwin92'
+    , database: 'dbzpool'
 });
 connection.connect(function (err) {
     if (err) {
@@ -76,7 +79,7 @@ router.post('/loginpost', function (req, res) {
     var pass = new Buffer(req.body.psw).toString('base64');
     console.log(email + " " + pass);
     var flag = 0;
-    console.log('SELECT * FROM customer where email="' + email + '" and password="' + pass + '" and verified = 1');
+    
     connection.query('SELECT * FROM customer where email="' + email + '" and password="' + pass + '" and verified = 1', function (err, rows, fields) {
         if (err) throw err;
         if (rows.length > 0) {
@@ -86,7 +89,7 @@ router.post('/loginpost', function (req, res) {
         } else {
             res.render('index', {
                 title: 'Zoompool',
-                message: 'Please enter valid credentials. If th credentials were correct please check if you verified your email address.',
+                message: 'Please enter valid credentials. If the credentials were correct please check if you verified your email address.',
             });
         }
     });
@@ -198,7 +201,6 @@ router.post('/signupost', function (req, res) {
 
     });
 });
-
 router.post('/advance', function (req, res) {
     var ridrordrive = req.body.riderdrive;
     var slot = req.body.slot;
@@ -211,21 +213,12 @@ router.post('/advance', function (req, res) {
     console.log(date);
     console.log(fomatteddate);
     var numriders = 2;
-
     connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + fomatteddate + '","' + numriders + '","' + dateFormat(now, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
         res.redirect('/home');
     });
 
-    console.log("I am here!!");
-    PythonShell.run('worker_instant_driver.py', function (err) {
-        if (err) throw err;
-        console.log('finished');
-    });
-    console.log("Something did happen!!");
 });
-
-
 router.post('/instant', function (req, res) {
     var ridrordrive = req.body.riderdrive;
     //var slot = req.body.slot;
@@ -239,13 +232,10 @@ router.post('/instant', function (req, res) {
     console.log(dateFormat(nowback, "YYYY-mm-dd hh:MM:ss"));
     //console.log(date);
     var numriders = 2;
-
     connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + date + '","' + numriders + '","' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
         res.redirect('/home');
     });
-
-
 });
 
 router.post('/updateaddress', function (req, res) {
@@ -347,3 +337,4 @@ router.get('/logout', function (req, res) {
 });
 
 module.exports = router;
+
