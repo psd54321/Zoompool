@@ -316,6 +316,7 @@ for allocation,allocationlist in drivermemo.iteritems():
             sql = "insert into confirmedtrip(tripID,driver,rider1,rider1_time) values ('" +allocation+"','"+allocation+"','"+allocationlist[0].split(" ")[0]+"', '"+allocationlist[0].split(" ")[1]+"')";
             cursor.execute(sql)
             db.commit()
+print drivermemo
     
 
 db.close()
