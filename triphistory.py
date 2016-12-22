@@ -13,8 +13,8 @@ key = 'AIzaSyCaiXqS-_gbYOJh9N_SfktWaaqvXI3yl1A'
 gmaps = googlemaps.Client(key=key)
 db = MySQLdb.connect("zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com","root","ashwin92","dbzpool" )
 cursor = db.cursor()
-#email = sys.argv[1]
-email = "sg4423@nyu.edu"
+email = sys.argv[1]
+#email = "sg4423@nyu.edu"
 sql = "select * from trip where email = '"+email+"' order by date DESC,book_time DESC limit 5"
 cursor.execute(sql)
 # Fetch all the rows in a list of lists.
