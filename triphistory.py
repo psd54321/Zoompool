@@ -47,7 +47,7 @@ for row in results:
             cursor.execute(sql)
             resultsc = cursor.fetchall()
             if(len(resultsc)!=0):
-                sql = "select c.fullname,t.date from customer as c,trip as t  where t.tripid="+str(resultsc[0][3])+" and t.email=c.email limit 1";
+                sql = "select c.fullname,t.date from customer as c,trip as t  where t.tripid="+str(resultsc[0][2])+" and t.email=c.email limit 1";
                 cursor.execute(sql)
                 resultsd = cursor.fetchall()
                 if(len(resultsd)!=0):
