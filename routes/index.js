@@ -327,7 +327,7 @@ router.get('/verified', function (req, res, next) {
     });
 });
 router.get('/verifyerror', function (req, res, next) {
-    res.render('verifyerro', {
+    res.render('verifyerror', {
         title: 'Express'
     });
 });
