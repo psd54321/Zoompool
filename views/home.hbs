@@ -72,7 +72,7 @@
                     <label class="radiolabel" for="radio4">Drive</label>
                 </div>
                 <h2><b>Select Slot</b></h2>
-                <select id="slot" name="slot" class="slotselect" onchange="populateTimeSlots();">
+                <select id="slot" name="slot" class="slotselect" onchange="populateTimeSlots();" required>
                     <option value="">--Select a Slot--</option>
                 </select>
                 <script>
@@ -102,11 +102,11 @@
                 </script>
                 
                 <h2><b>Choose your time range</b></h2>
-                <select id="time1" name="time1" class="slotselect">
+                <select id="time1" name="time1" class="slotselect" required>
                     <option value="">Choose Time</option>
                 </select>
                 to
-                <select id="time2" name="time2" class="slotselect">
+                <select id="time2" name="time2" class="slotselect" required>
                     <option value="">Choose Time</option>
                 </select>
                 <script>

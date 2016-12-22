@@ -332,6 +332,12 @@ router.get('/verifyerror', function (req, res, next) {
     });
 });
 
+router.get('/signupsuccess', function (req, res, next) {
+    res.render('signupsuccess', {
+        title: 'Express'
+    });
+});
+
 router.get('/logout', function (req, res) {
     if (req.session.login == "set") {
         req.session.login = "";
