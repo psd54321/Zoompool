@@ -19,7 +19,7 @@ sql = "select * from trip where email = '"+email+"' order by date DESC,book_time
 cursor.execute(sql)
 # Fetch all the rows in a list of lists.
 results = cursor.fetchall()
-tablestr = "<table><tr><th>Ridetype</th><th>Booking Date</th><th>Status</th><th>Driver</th><th>Rider 1</th><th>Rider 2</th><th>Ride Date</th><th>Ride Time</th></tr>"
+tablestr = "<table class='table-responsive'><tr><th>Ridetype</th><th>Booking Date</th><th>Status</th><th>Driver</th><th>Rider 1</th><th>Rider 2</th><th>Ride Date</th><th>Ride Time</th></tr>"
 for row in results:
     tripid = row[0]
     ridetype= row[1]
