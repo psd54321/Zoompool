@@ -238,10 +238,13 @@ for drivername, drivervalue in drivers.iteritems():
             start_time = matrix["rows"][0]["elements"][0]["duration"]["value"]
             end_distance = getMiles(matrix["rows"][1]["elements"][1]["distance"]["value"])
             end_time = matrix["rows"][1]["elements"][1]["duration"]["value"]
-            #print start_time;
+            #print str(drivername)+" "+str(ridername)+" "+str(start_distance);
+            #print str(drivername)+" "+str(ridername)+" "+str(end_distance);
             newdrivertime1 = driverschedule[drivername][0]+timedelta(seconds=start_time)
             newdrivertime2 = driverschedule[drivername][1]+timedelta(seconds=start_time)
-            if(riderschedule[ridername][0]>=newdrivertime1 and riderschedule[ridername][0]<=newdrivertime2):
+            #print str(drivername)+" "+str(ridername)+" start:"+str(newdrivertime1)+" end:"+str(newdrivertime2)
+            #print riderschedule[ridername][0]>=newdrivertime1
+            if((riderschedule[ridername][0]>=newdrivertime1 and riderschedule[ridername][0]<=newdrivertime2) or (riderschedule[ridername][0]<=newdrivertime1 and riderschedule[ridername][1]>=newdrivertime2) or (riderschedule[ridername][1]>=newdrivertime1 and riderschedule[ridername][1]<=newdrivertime2)):
                 results = ""
                 if (waypoint == ""):
                     results = gmaps.directions(str(drivers[drivername][0][0]) + "," + str(drivers[drivername][0][1]),
@@ -273,8 +276,9 @@ for drivername, drivervalue in drivers.iteritems():
                     r = ridername
                     coordinates = dis[1]
                 #print minimum
-
+                #print minimum
         if(r in riders):
+            
             drivermemo[drivername].append(str(r)+" "+str(riderschedule[ridername][0]))
             waypoint = str(riders[r][coordinates][0]) + "," + str(riders[r][coordinates][1])
             riders.pop(r,None)
