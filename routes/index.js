@@ -17,6 +17,7 @@ var publicConfig = {
 }
 var gmAPI = new GoogleMapsAPI(publicConfig);
 var os = require("os");
+var path = require('path');
 
 
 /* GET home page. */
@@ -263,7 +264,8 @@ router.post('/instant', function (req, res) {
 router.get('/bookings', function (req, res) {
 
      var options = {
-                args: [req.session.email]
+                args: [req.session.email],
+             scriptPath: path.join(__dirname, '..')
             };
     
     PythonShell.run('triphistory.py', options, function (err, results) {
