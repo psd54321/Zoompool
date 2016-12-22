@@ -313,15 +313,22 @@ router.get('/verify/:token', function (req, res) {
         if (rows.length > 0) {
             connection.query('update customer set verified = 1 where email="' + rows[0].email + '"', function (err) {
                 if (err) throw err;
-                res.render('verified', {
-                    title: 'Express'
-                });
+                res.redirect('/verified');
             });
         } else {
-            res.render('verifyerror', {
-                title: 'Express'
-            });
+            res.redirect('/verifyerror');
         }
+    });
+});
+
+router.get('/verified', function (req, res, next) {
+    res.render('verified', {
+        title: 'Express'
+    });
+});
+router.get('/verifyerror', function (req, res, next) {
+    res.render('verifyerro', {
+        title: 'Express'
     });
 });
 

@@ -1,0 +1,25 @@
+{
+  "name": "zoompool",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "cookie-parser": "~1.4.3",
+<<<<<<< HEAD
+    "debug": "~2.2.0",
+    "express": "~4.13.4",
+    "google-maps": "^3.2.1",
+=======
+    "debug": "~2.3.3",
+    "express": "~4.14.0",
+    "google-maps": "^3.2.1",
+    "hbs": "^4.0.1",
+>>>>>>> ad28ba34e214d9fe1e5849cc91f4f076f1cc9e08
+    "jade": "~1.11.0",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.0"
+  }
+}

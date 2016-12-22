@@ -1,0 +1,29 @@
+{
+  "name": "zoompool",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "aws-es": "latest",
+    "aws-sdk": "~2.1.36",
+    "aws4": "latest",
+    "body-parser": "~1.15.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.3.3",
+    "elasticsearch": "latest",
+    "express": "~4.14.0",
+    "google-maps": "^3.2.1",
+    "googlemaps": "^1.11.1",
+    "hbs": "^4.0.1",
+    "is_js": "latest",
+    "jade": "~1.11.0",
+    "morgan": "~1.7.0",
+    "polyline": "^0.2.0",
+    "request": "latest",
+    "serve-favicon": "~2.3.0",
+    "sns-validator": "^0.2.1",
+    "workerpool": "~1.0.0"
+  }
+}
