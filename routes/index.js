@@ -265,20 +265,26 @@ router.post('/instant', function (req, res) {
 
 router.get('/bookings', function (req, res) {
 
-     var options = {
+    if (req.session.login == "set") {
+         var options = {
                 args: [req.session.email],
              scriptPath: path.join(__dirname, '..')
             };
     
-    PythonShell.run('triphistory.py', options, function (err, results) {
-        if (err) throw err;
-        // results is an array consisting of messages collected during execution
-        console.log('results: %j', results);
-        res.render('bookings', {
-            tabletoshow: results[0],
-            title: 'Express'
+        PythonShell.run('triphistory.py', options, function (err, results) {
+            if (err) throw err;
+            // results is an array consisting of messages collected during execution
+            console.log('results: %j', results);
+            res.render('bookings', {
+                tabletoshow: results[0],
+                title: 'Express'
+            });
         });
-    });
+    } else {
+        res.redirect('/');
+    }
+
+    
 });
 
 router.post('/updateaddress', function (req, res) {
