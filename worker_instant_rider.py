@@ -13,7 +13,7 @@ key = 'AIzaSyCaiXqS-_gbYOJh9N_SfktWaaqvXI3yl1A'
 gmaps = googlemaps.Client(key=key)
 db = MySQLdb.connect("zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com","root","ashwin92","dbzpool" )
 cursor = db.cursor()
-sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype, t.time1, t.time2, t.date, t.allocated,t.tripid FROM customer as c, trip as t where c.email=t.email and t.allocated = 0 order by homelat, homelong, worklat, worklong";
+sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype, t.time1, t.time2, t.date, t.allocated,t.tripid FROM customer as c, trip as t where c.email=t.email order by homelat, homelong, worklat, worklong";
 drivers = {}
 
 driverschedule = {}
