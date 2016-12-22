@@ -4,52 +4,8 @@ import polyline
 import json
 import math
 import MySQLdb
-import boto.ses
 
-AWS_ACCESS_KEY = 'AKIAJ2X7BFRZTIO2MVSQ'  
-AWS_SECRET_KEY = '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'
-class Email(object):  
-    def __init__(self, to, subject):
-        self.to = to
-        self.subject = subject
-        self._html = None
-        self._text = None
-        self._format = 'html'
 
-    def html(self, html):
-        self._html = html
-
-    def text(self, text):
-        self._text = text
-
-    def send(self, from_addr=None):
-        body = self._html
-
-        if isinstance(self.to, basestring):
-            self.to = [self.to]
-        if not from_addr:
-            from_addr = 'sg4423@nyu.edu'
-        if not self._html and not self._text:
-            raise Exception('You must provide a text or html body.')
-        if not self._html:
-            self._format = 'text'
-            body = self._text
-
-        connection = boto.ses.connect_to_region(
-            'us-east-1',
-            aws_access_key_id=AWS_ACCESS_KEY, 
-            aws_secret_access_key=AWS_SECRET_KEY
-        )
-
-        return connection.send_email(
-            from_addr,
-            self.subject,
-            None,
-            self.to,
-            format=self._format,
-            text_body=self._text,
-            html_body=self._html
-        )
 key = 'AIzaSyCaiXqS-_gbYOJh9N_SfktWaaqvXI3yl1A'
 gmaps = googlemaps.Client(key=key)
 db = MySQLdb.connect("zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com","root","ashwin92","dbzpool" )
@@ -326,7 +282,7 @@ for drivername, drivervalue in drivers.iteritems():
 #print drivermemo
 #print str(cursor)
 for allocation,allocationlist in drivermemo.iteritems():
-    if len(allocationlist) == 2:
+    if len(allocationlist) == 2 or len(allocationlist)==1:
         sql = "update trip set allocated=%d where tripid=%d" % (1,int(allocation));
         #print sql;
         cursor.execute(sql)
@@ -349,10 +305,7 @@ for allocation,allocationlist in drivermemo.iteritems():
             sql = "update confirmedtrip set driver = '"+allocation+"', rider1='"+allocationlist[0].split(" ")[0]+"', rider1_time='"+allocationlist[0].split(" ")[1]+"' where tripID ='" +allocation+"'";
             cursor.execute(sql)
             db.commit()
-        else:
-            sql = "update confirmedtrip set driver = '"+allocation+"' where tripID ='" +allocation+"'";
-            cursor.execute(sql)
-            db.commit()
+    
     else:
         if(len(allocationlist)==2):
             sql = "insert into confirmedtrip(tripID,driver,rider1,rider1_time,rider2,rider2_time) values ('" +allocation+"','"+allocation+"','"+allocationlist[0].split(" ")[0]+"', '"+allocationlist[0].split(" ")[1]+"','"+allocationlist[1].split(" ")[0]+"','"+allocationlist[1].split(" ")[1]+"')";
@@ -363,17 +316,11 @@ for allocation,allocationlist in drivermemo.iteritems():
             sql = "insert into confirmedtrip(tripID,driver,rider1,rider1_time) values ('" +allocation+"','"+allocation+"','"+allocationlist[0].split(" ")[0]+"', '"+allocationlist[0].split(" ")[1]+"')";
             cursor.execute(sql)
             db.commit()
-        else:
-            sql = "insert into confirmedtrip(tripID,driver) values ('" +allocation+"','"+allocation+"')";
-            cursor.execute(sql)
-            db.commit()
+    
 
 db.close()
     
-email = Email(to='psd281@nyu.edu', subject='OMG You are HTML Awesome')  
-email.text('This is a text body. Foo bar.')  
-email.html('<html><body>This is a text body. <strong>Foo bar.</strong></body></html>')  # Optional  
-email.send() 
+ 
     
             
             

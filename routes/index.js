@@ -36,8 +36,7 @@ router.get('/home', function (req, res, next) {
         res.render('home', {
             title: 'Express'
         });
-    }
-    else {
+    } else {
         res.redirect('/');
     }
 });
@@ -46,8 +45,7 @@ router.get('/address', function (req, res, next) {
         res.render('address', {
             title: 'Express'
         });
-    }
-    else {
+    } else {
         res.redirect('/');
     }
 });
@@ -56,16 +54,15 @@ router.get('/driver', function (req, res, next) {
         res.render('driversetup', {
             title: 'Express'
         });
-    }
-    else {
+    } else {
         res.redirect('/');
     }
 });
 var connection = mysql.createConnection({
-    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com'
-    , user: 'root'
-    , password: 'ashwin92'
-    , database: 'dbzpool'
+    host: 'zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com',
+    user: 'root',
+    password: 'ashwin92',
+    database: 'dbzpool'
 });
 connection.connect(function (err) {
     if (err) {
@@ -79,7 +76,7 @@ router.post('/loginpost', function (req, res) {
     var pass = new Buffer(req.body.psw).toString('base64');
     console.log(email + " " + pass);
     var flag = 0;
-    
+
     connection.query('SELECT * FROM customer where email="' + email + '" and password="' + pass + '" and verified = 1', function (err, rows, fields) {
         if (err) throw err;
         if (rows.length > 0) {
@@ -133,7 +130,7 @@ router.post('/signupost', function (req, res) {
                 connection.query('Insert into customer(Fullname,Email,Password,Dob,Gender,token,verified) values ("' + fname + '","' + email + '","' + pass + '","' + dob + '","' + gender + '","' + token + '",0)', function (err) {
                     if (err) throw err;
                     res.redirect('/');
-                     geocodeParams = {
+                    geocodeParams = {
                         "address": home,
                         "language": "en"
                     };
@@ -234,7 +231,49 @@ router.post('/instant', function (req, res) {
     var numriders = 2;
     connection.query('Insert into trip(tripid,ridetype,time1,time2,date,no_of_riders,book_time,email) values (NULL,"' + ridrordrive + '","' + time1 + '","' + time2 + '","' + date + '","' + numriders + '","' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '","' + email + '")', function (err) {
         if (err) throw err;
-        res.redirect('/home');
+
+        connection.query('SELECT tripid FROM customer where book_time="' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '"', function (err, rows, fields) {
+
+            var options = {
+                args: [rows[0].tripid]
+            };
+            if (ridrordrive == "rider")
+                PythonShell.run('worker_instant_rider.py', options, function (err, results) {
+                    if (err) throw err;
+                    // results is an array consisting of messages collected during execution
+                    console.log("I am at least till here")
+                    console.log('results: %j', results);
+                    res.redirect('/bookings');
+                });
+            else {
+                PythonShell.run('worker_instant_driver.py', options, function (err, results) {
+                    if (err) throw err;
+                    // results is an array consisting of messages collected during execution
+                    console.log("I am at least till here")
+                    console.log('results: %j', results);
+                    res.redirect('/bookings');
+                });
+            }
+        });
+        //res.redirect('/home');
+    });
+});
+
+
+router.get('/bookings', function (req, res) {
+
+     var options = {
+                args: [req.session.email]
+            };
+    
+    PythonShell.run('triphistory.py', options, function (err, results) {
+        if (err) throw err;
+        // results is an array consisting of messages collected during execution
+        console.log('results: %j', results);
+        res.render('bookings', {
+            tabletoshow: results[0],
+            title: 'Express'
+        });
     });
 });
 
@@ -350,4 +389,3 @@ router.get('/logout', function (req, res) {
 });
 
 module.exports = router;
-

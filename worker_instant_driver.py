@@ -71,8 +71,8 @@ driverschedule = {
     "Harsh": datetime(2000,1,1,9,16,55),
     "Raj": datetime(2000,1,1,9,16,55)
 }'''
-#ridername = sys.argv[1]
-drivername = 2
+drivername = sys.argv[1]
+#drivername = 2
 sql = "SELECT c.email, c.homelat, c.homelong, c.worklat, c.worklong, t.ridetype, t.time1, t.time2, t.date, t.allocated,t.tripid FROM customer as c, trip as t where c.email=t.email and t.tripid = '"+str(drivername)+"'";
 #print sql
 cursor.execute(sql)
@@ -141,7 +141,7 @@ for ridername, ridervalue in riders.iteritems():
                     drivermemo[str(drivername)] = []
                 drivermemo[str(drivername)].append(ridername+" "+str(riderschedule[ridername][0]))
                 
-                if len(drivermemo[str(drivername)]) == 2:
+                if len(drivermemo[str(drivername)]) == 2 or len(drivermemo[str(drivername)]) == 1:
                     sql = "update trip set allocated=%d where tripid=%d" % (1,drivername);
                     #print sql;
                     cursor.execute(sql)
@@ -164,10 +164,6 @@ for ridername, ridervalue in riders.iteritems():
                         sql = "update confirmedtrip set driver = '"+str(drivername)+"', rider1='"+drivermemo[str(drivername)][0].split(" ")[0]+"', rider1_time='"+drivermemo[str(drivername)][0].split(" ")[1]+"' where tripID ='" +str(drivername)+"'";
                         cursor.execute(sql)
                         db.commit()
-                    else:
-                        sql = "update confirmedtrip set driver = '"+str(drivername)+"' where tripID ='" +str(drivername)+"'";
-                        cursor.execute(sql)
-                        db.commit()
                 else:
                     if(len(drivermemo[str(drivername)])==2):
                         sql = "insert into confirmedtrip(tripID,driver,rider1,rider1_time,rider2,rider2_time) values ('" +str(drivername)+"','"+str(drivername)+"','"+drivermemo[str(drivername)][0].split(" ")[0]+"', '"+drivermemo[str(drivername)][0].split(" ")[1]+"','"+drivermemo[str(drivername)][1].split(" ")[0]+"','"+drivermemo[str(drivername)][1].split(" ")[1]+"')";
@@ -176,10 +172,6 @@ for ridername, ridervalue in riders.iteritems():
                         db.commit()
                     elif(len(drivermemo[str(drivername)])==1):
                         sql = "insert into confirmedtrip(tripID,driver,rider1,rider1_time) values ('" +str(drivername)+"','"+str(drivername)+"','"+drivermemo[str(drivername)][0].split(" ")[0]+"', '"+drivermemo[str(drivername)][0].split(" ")[1]+"')";
-                        cursor.execute(sql)
-                        db.commit()
-                    else:
-                        sql = "insert into confirmedtrip(tripID,driver) values ('" +str(drivername)+"','"+str(drivername)+"')";
                         cursor.execute(sql)
                         db.commit()
                 #print drivermemo
