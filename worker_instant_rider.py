@@ -136,7 +136,7 @@ for drivername, drivervalue in drivers.iteritems():
             #print (driverschedule[drivername][1]+timedelta(seconds=start_time))
             #print riderschedule[0]
             #print "END DISTANCE: "+str(end_distance)
-            if(start_distance<=3.0 and ((driverschedule[drivername][0]+timedelta(seconds=start_time))<=riderschedule[0]) and ((driverschedule[drivername][1]+timedelta(seconds=start_time))>=riderschedule[0]) and end_distance<=3.0):              #atmost 3miles of distance, reduce to 1 mile
+            if(start_distance<=1.0 and ((driverschedule[drivername][0]+timedelta(seconds=start_time))<=riderschedule[0]) and ((driverschedule[drivername][1]+timedelta(seconds=start_time))>=riderschedule[0]) and end_distance<=1.0):              #atmost 3miles of distance, reduce to 1 mile
                 if(drivername not in drivermemo):
                     drivermemo[drivername] = []
                 drivermemo[drivername].append(ridername+" "+str(riderschedule[0]))
