@@ -285,7 +285,7 @@ for drivername, drivervalue in drivers.iteritems():
             waypoint = str(riders[r][coordinates][0]) + "," + str(riders[r][coordinates][1])
             riders.pop(r,None)
 
-print drivermemo
+#print drivermemo
 #print str(cursor)
 for allocation,allocationlist in drivermemo.iteritems():
     if len(allocationlist) == 2 or len(allocationlist)==1:
