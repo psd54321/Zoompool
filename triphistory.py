@@ -24,10 +24,12 @@ for row in results:
     tripid = row[0]
     ridetype= row[1]
     time1 = row[2]
-    date = row[3]
-    no_of_riders = row[4]
-    email = row[5]
-    allocated = row[6]
+    time2 = row[3]
+    date = row[4]
+    no_of_riders = row[5]
+    book_time = row[6]
+    email = row[7]
+    allocated = row[8]
     status = "-"
     driver = "-"
     rider1 = "-"
