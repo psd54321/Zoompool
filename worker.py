@@ -280,11 +280,10 @@ for drivername, drivervalue in drivers.iteritems():
                         coordinates = dis[1]
                     #print minimum
                     #print minimum
-            if(r in riders):
-                
-                drivermemo[drivername].append(str(r)+" "+str(riderschedule[r][0]))
-                waypoint = str(riders[r][coordinates][0]) + "," + str(riders[r][coordinates][1])
-                riders.pop(r,None)
+        if(r in riders):
+            drivermemo[drivername].append(str(r)+" "+str(riderschedule[r][0]))
+            waypoint = str(riders[r][coordinates][0]) + "," + str(riders[r][coordinates][1])
+            riders.pop(r,None)
 
 print drivermemo
 #print str(cursor)
