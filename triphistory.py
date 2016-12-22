@@ -13,8 +13,8 @@ key = 'AIzaSyCaiXqS-_gbYOJh9N_SfktWaaqvXI3yl1A'
 gmaps = googlemaps.Client(key=key)
 db = MySQLdb.connect("zoompooldb.cjofwze7tr75.us-west-2.rds.amazonaws.com","root","ashwin92","dbzpool" )
 cursor = db.cursor()
-email = sys.argv[1]
-#email = "pg123@nyu.edu"
+#email = sys.argv[1]
+email = "sg4423@nyu.edu"
 sql = "select * from trip where email = '"+email+"' order by date DESC,book_time DESC limit 5"
 cursor.execute(sql)
 # Fetch all the rows in a list of lists.
@@ -77,7 +77,6 @@ for row in results:
                     if(len(resultsd)!=0):
                         rider2 = resultsd[0][0]
                         rider2_time = resultsc[0][1]
-                ridedate = resultsc[0][6]
-    tablestr+="<tr><td>"+ridetype+"</td><td>"+str(date)+"</td><td>"+status+"</td><td>"+driver+"</td><td>"+rider1+"<br>"+str(rider1_time)+"</td><td>"+rider2+"<br>"+str(rider2_time)+"</td><td>"+str(ridedate)+"</td><td>"+str(ride_time)+"</td></tr>"
+    tablestr+="<tr><td style='text-transform: capitalize'>"+ridetype+"</td><td>"+str(book_time)+"</td><td>"+status+"</td><td>"+driver+"</td><td>"+rider1+"<br>"+str(rider1_time)+"</td><td>"+rider2+"<br>"+str(rider2_time)+"</td><td>"+str(ridedate)+"</td><td>"+str(ride_time)+"</td></tr>"
 print tablestr+"</table></div>"
     
