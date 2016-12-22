@@ -236,7 +236,8 @@ router.post('/instant', function (req, res) {
         connection.query('SELECT tripid FROM customer where book_time="' + dateFormat(nowback, "yyyy-mm-dd hh:MM:ss") + '"', function (err, rows, fields) {
 
             var options = {
-                args: [rows[0].tripid]
+                args: [rows[0].tripid],
+                scriptPath: path.join(__dirname, '..')
             };
             if (ridrordrive == "rider")
                 PythonShell.run('worker_instant_rider.py', options, function (err, results) {
