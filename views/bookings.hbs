@@ -1,0 +1,23 @@
+<div class="sidebarcontainer">
+    <input type="checkbox" id="drawer-toggle" name="drawer-toggle" />
+    <label for="drawer-toggle" id="drawer-toggle-label"></label>
+    <nav id="drawer">
+        <ul>
+           <li><a href="/home">Home</a></li>
+            <li><a href="/address">Addresses</a></li>
+            <li><a href="/driver">Driver Setup</a></li>
+            <li><a href="/bookings">Bookings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+</div>
+<div class="homecontainer">
+    <div class="logo">
+        <a href="/home"><img src="images/logo.png" alt="Avatar" class="avatar"></a>
+    </div>
+    <br>
+    <br>
+    <h3 class="head">Your most recent trips</h3>
+    <br>
+    {{tabletoshow}}
+</div>
