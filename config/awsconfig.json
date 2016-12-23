@@ -1,6 +1,6 @@
 {
-    "accessKey": "AKIAIMN6GA3S2AUSCG7Q",
-    "secretAccessKey": "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",
+    "accessKey": "",
+    "secretAccessKey": "",
     "region": "us-east-1",
     "queueUrl": "https://sqs.us-east-1.amazonaws.com/341233333632/psd281tweets",
     "snsTopicARN": "arn:aws:sns:us-east-1:341233333632:tweets",
